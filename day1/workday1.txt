@@ -1,0 +1,21 @@
+Assume:
+All 3 road are of equal importance.
+No car travels more than one loop around the circle.
+T=time for 30 cars from one entrance to pass through the circle.
+At max one car in time T can get out of the exit lane and pass back into the circle.
+Total Cars passing in time T: 90 (30 from each entrance).
+E1 sends 2 cars to A1, 14 cars to A2, 14 cars to A3.
+E2 sends 2 cars to A1, 14 cars to A2, 14 cars to A3.
+E3 sends 2 cars to A1, 14 cars to A2, 14 cars to A3.
+Pathway:	Number of Cars passing through in time T:
+E1 -> R1	15
+R1 -> A2	14
+R1 -> E2	1
+E1 -> E2	15
+E2 -> R2	15
+E2 -> E3	1
+R2 -> A3	14
+R2 -> E3	1
+E2 -> R3	2
+
+
