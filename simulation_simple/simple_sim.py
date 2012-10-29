@@ -12,8 +12,8 @@ class Traffic:
         """
         self.size = len(distribution)
         self.wait_line = list(distribution)
-        self.state = np.zeros(3 * self.size)
-
+        self.state = np.zeros(3 * self.size)   
+    
     def enter(self):
         """
         If an entrance is empty, throw in a new car.
@@ -59,7 +59,7 @@ def probablistic():
     print(simple_traffic.wait_line)
     print("layout:")
     print(simple_circle.layout)
-
+    
     for i in range(100):
         print("Proceed one time step:")
         simple_traffic.state = np.dot(simple_circle.layout, simple_traffic.state)
