@@ -58,7 +58,7 @@ class Circle:
         # create Markov matrix
         self.layout = np.vstack((v for v in nodes)).transpose()/2.
 
-def probablistic(dist = (1,1,1)):
+def probabilistic(dist = (1,1,1)):
     simple_circle = Circle()
     simple_traffic = Traffic(dist)
     print("Run Traffic.enter()")
@@ -87,4 +87,4 @@ def converged(arr):
 
 
 if __name__ == "__main__":
-    sys.exit(probablistic())
+    sys.exit(probabilistic())
