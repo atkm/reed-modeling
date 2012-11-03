@@ -1,0 +1,54 @@
+## rough cost function with optimization.  Variables:
+##     n: exponential factor
+##     L1: first poisson rate parameter
+##     L2: second  ''
+##     tb: time to enter circle when no cars are in the circle
+##     r : radius of traffic circle in car 'buffers'
+##     E : number of entrances to circle
+##     w : number of cars to be processed
+##     l : number of lanes in circle
+##     pars: the first three of these values
+
+## make par a vector of reasonable starting values:
+## par <- c(2,.3,.3)
+## then run optim()
+
+cost <- function(pars, tb=5, r=4, E=3, w=10, l=1){
+   n = pars[1]
+   L1 = pars[2]
+   L2 = pars[3]
+   k = l*2*pi*r
+   etas <- rep(0,w)
+   eta1s <- rep(0,w)
+   eta2s <- rep(0,w)
+   for (i in 1:w){
+       eta1s[i] <- rpois(1,L1)
+       eta2s[i] <- rpois(1,L2)
+       }
+   etas <- cumsum(eta1s)-cumsum(eta2s)
+   summe = rep(0,w)
+   for (i in 1:w){
+       summe[i] <- (tb*(1+(etas[i]/k)^n)+ E*eta1s[i])^5
+       }
+   return(sum(summe))
+   }
+
+optim(par = c(2, .3,.3), fn = cost)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+layout <- function(
