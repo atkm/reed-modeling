@@ -1,2 +1,7 @@
 Simulation of traffic flow in a traffic circle
 Based on Wyatt's "traffic_circle_graph".
+
+10/28/12:
+    Probablistic simulation. Compute the number of times the markov matrix 
+    need to be applied to a state vector before it converges to zero.
+

@@ -1,0 +1,31 @@
+\documentclass[11pt]{amsart}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Traffic Circle}
+\author{Laura Lyman}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+\begin{enumerate}
+\item[$01^\circ$] $\mathcal{C} \equiv$ cost, $l \equiv$ number of lanes, $b \equiv $ buffer size, $r \equiv$ radius (units of buffer size), $k \equiv 2 \pi l r$, $E \equiv$ number of entrances, $v_i \equiv$ average car speed, $t_w \equiv$ time to enter circle, $t_b \equiv$ base time, $t_c \equiv$ time in the circle
+\\ \\
+$w_1 \equiv$ number of cars entering the circle, $\eta \equiv$ number of cars in the circle, $w_2 \equiv$ number of cars leaving the circle
+\\ 
+\item[$02^\circ$] Assume $w_1 \sim \text{Poisson}(\lambda_1)$ and $w_2 \sim \text{Poisson}(\lambda_2)$. Thus, $P(w_1 = j) = \displaystyle \frac{\lambda_1^j e^{-\lambda_1}}{j!}$ and $P(w_2 = j) = \displaystyle \frac{\lambda_2^j e^{-\lambda_2}}{j!}$.
+ \\
+\item[$03^\circ$] $\eta = \displaystyle \sum_j (w_1)_j - (w_2)_j$
+\\ \\
+$ \mathcal{C} = \displaystyle \sum_{j} t_b (1 + (\frac{\mu}{2 \pi l r})^n) + E (w_1)_j$
+ 
+\end{enumerate}
+\end{document}
