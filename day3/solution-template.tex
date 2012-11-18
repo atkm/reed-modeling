@@ -1,3 +1,43 @@
+\documentclass[11pt]{article}
+% Useful math stuff in amsmath
+\usepackage{amsmath, enumerate, graphicx}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\usepackage{fullpage}
+% Tweak the headings
+\pagestyle{myheadings}
+\renewcommand{\thepage}{Page \arabic{page}}
+\newcommand{\pagetop}{Team \# 000}
+\setlength{\headsep}{0.4in}
+\markboth{\pagetop}{\pagetop}
+%
+% \T and \B are 'fudge factors' for the tabular environment.
+%
+\newcommand\T{\rule{0pt}{2.6ex}}
+\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+%
+% The main document begins here...
+%
 \begin{document}
+
+\centerline{\textbf{\Large Title of the Report}}
+
+\section{Introduction}
+
+\section{Background}
+
+\section{Analytical Approach}
+
+\section{Numerical Approach}
+
+\section{Results}
+\label{sec:RESULTS}
+
+\begin{thebibliography}{99}
+\bibitem{MF} J.~H.~Mathews, K.~D.~Fink, \emph{Numerical Methods Using MATLAB (third edition)},
+                  Prentice-Hall, New Jersey, 1999.
+\end{thebibliography}
 
 \end{document}
