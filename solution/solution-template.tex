@@ -1,0 +1,47 @@
+\documentclass[12pt]{report}
+
+\usepackage{mcm}
+
+%Headings
+\pagestyle{myheadings}
+\renewcommand{\thepage}{Page \arabic{page}}
+\newcommand{\pagetop}{Team \# 00000}
+\setlength{\headsep}{0.4in}
+\markboth{\pagetop}{\pagetop}
+
+%Title
+\title{\textbf{Title of the Solution}}
+\author{Reedie 1, Reedie 2, Reedie 3}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\tableofcontents
+
+\section{Introduction}
+blah blah\cite{MF}
+
+\section{Background}
+
+some equation
+\begin{equation*}
+  \frac{−h^2}{2m} \frac{d^2\Phi}{dx^2} + kx^2\Phi = E\Phi
+\end{equation*}
+
+\section{Analytical Approach}
+
+\section{Numerical Approach}
+
+\section{Results}
+\label{sec:RESULTS}
+
+
+\begin{thebibliography}{99}
+\bibitem{MF} J.~H.~Mathews, K.~D.~Fink, \emph{Numerical Methods Using MATLAB (third edition)},
+                  Prentice-Hall, New Jersey, 1999.
+\end{thebibliography}
+
+\end{document}

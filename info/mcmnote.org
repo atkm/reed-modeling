@@ -1,0 +1,124 @@
+* MCM Instruction
+** Registration
+   Your team is not officially registered until you have received a team 
+   control number. Print the page that displays your team control number: It 
+   is your only confirmation that your team has been registered.
+   Team members can be changed before the contest begins
+** When it begins
+   - Teams can view the contest problems via the contest web site when the 
+   contest begins at 8PM EST on Thursday January 31, 2013
+   - I.E. 5pm Thursday
+     http://www.comap.com/undergraduate/contests/mcm
+     or
+     http://www.comap-math.com/mcm/index.html
+     or
+     http://www.mathismore.net/mcm/index.html
+     or
+     http://www.mathportals.com/mcm/index.html
+   - choose problem A or B (don't choose C)
+ 
+** The contest
+   - citations
+   - no living source
+
+** Summary Sheet
+   The summary is an essential part of your MCM/ICM paper. The judges place 
+   considerable weight on the summary, and winning papers are often 
+   distinguished from other papers based on the quality of the summary.
+
+   To write a good summary, imagine that a reader will choose whether to read 
+   the body of the paper based on your summary: Your concise presentation in 
+   the summary should inspire a reader to learn about the details of your 
+   work. Thus, a summary should clearly describe your approach to the problem 
+   and, most prominently, your most important conclusions.  Summaries that are 
+   mere restatements of the contest problem, or are a cut-and-paste 
+   boilerplate from the Introduction are generally considered to be weak.
+
+** formatting the solution
+   The Solution Paper must display the team control number and the page number 
+   at the top of every page; for example, use the following page header on 
+   each page:
+
+   Team # 321                        Page 6 of 13
+
+   The names of the students, advisor, or institution should NOT appear on any 
+   page of the print solution or electronic solution. The solution should not 
+   contain any identifying information other than the team control number.
+
+** Contents of the solution
+   Besides the summary sheet as described each paper should contain the 
+   following sections:
+
+   - Restatement and clarification of the problem: State in your own words what you are going to do.
+   - Explain assumptions and rationale/justification: Emphasize the assumptions that bear on the problem. 
+     Clearly list all variables used in your model.
+   - Include your model design and justification for type model used or developed
+   - Describe model testing and sensitivity analysis, including error analysis, etc.
+   - Discuss the strengths and weaknesses of your model or approach.
+
+** The solution
+   The judges will evaluate the quality of your writing in the Solution Paper:
+
+   ·Conciseness and organization are extremely important.
+   ·Key statements should present major ideas and results.
+   ·Present a clarification or restatement of the problem, as 
+   appropriate.
+   ·Present a clear exposition of all variables, assumptions, and 
+   hypotheses.
+   ·Present an analysis of the problem, including the motivation or 
+   justification for the model that is used.
+   ·Include a design of the model.
+   ·Discuss how the model could be tested, including error analysis 
+   and stability (conditioning, sensitivity, etc.).
+   ·Discuss any apparent strengths or weaknesses in your model or 
+   approach.)
+
+** Turning in the solution
+   solutions@comap.com
+   by 5pm Monday
+   Subject: COMAP #CONTROL NUM
+   Attachment: CONTROL_NUM.pdf (or msword)
+
+** When it's over
+   - sign the Control Sheet
+
+** Irena
+   - After the contest begins at 8PM EST on Thursday January 31, 2013, and while 
+   the teams are preparing their solutions, the advisor should:
+
+   1. Login to the contest web site (go to 
+           http://www.comap.com/undergraduate/contests/mcm. Click on Advisor 
+           Login, then enter your email address and password).
+
+   2. Enter the team member names and confirm that each name is 
+                   spelled correctly. This determines how the names will 
+                   appear on the contest certificates. COMAP will not make any 
+                   changes or reprint certificates for any reason.
+
+   3. Specify the problem that your team has chosen to solve.
+
+   4. Print one copy of the Control Sheet.
+
+   5. Print one copy of the team Summary Sheet.
+
+   - When the contest ends at 8PM EST on February 4, 2013:
+
+   1. Each team member must sign the Control Sheet to pledge that he or she abided by the contest rules and instructions.
+   
+   2. Make one copy of your team’s Solution Paper.
+   
+   3. Place the Summary Sheet on top of the Solution Paper.
+   
+   4. Staple the Control Sheet on top the Summary Sheet and Solution Paper.
+   
+       *So the paper order should be: Control Sheet on top followed by Summary Sheet followed by the Solution Paper.
+   
+   5. Enclose an electronic copy (PDF or Word file) of your team’s Solution Paper on a CD-ROM. 
+      Programs and software will not be used in the judging process. DO NOT include them on the CD.
+   
+      If you advise more than one team, please include both teams’ files on a single CD-ROM and label it with contest, year, and both teams’ control numbers.
+   
+      Example:
+   
+               Year Contest                Control Numbers
+               2013 MCM/ICM         10004, 10005
