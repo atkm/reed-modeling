@@ -1,0 +1,30 @@
+* MCM Schedule
+** Stuff to figure out
+    Team:
+      1 = Atsya, Laura, Wyatt
+      2 = Dan, Nathan, Ben
+    Food: Wyatt
+    Location: Polytopia
+
+** Schedule (from Cline)
+    Thursday 
+      5pm: Problem posted -- Meet at Polytopia
+      understand the problem
+      start thinking about solutions
+
+    Friday
+      wrap up background research
+      come up with possible solutions (plural!)
+      implement models
+
+    Saturday
+      gather data from models
+
+    Sunday
+      get the final data
+      draft the paper
+
+    Monday
+      spend lots of time on the summary
+      1pm: Print out the solution and read it
+      5pm: Email solution
