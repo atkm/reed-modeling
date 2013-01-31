@@ -1,0 +1,35 @@
+% Style for MCM2013 Reed College
+\ProvidesPackage{mcm}
+
+% Font: KP fonts
+\usepackage{kpfonts}
+\usepackage[T1]{fontenc}
+
+% basic packages
+\usepackage{amsmath,amssymb,amsfonts,enumerate,graphicx,microtype}
+
+% Use natbib for bibliography
+\usepackage{natbib}
+% Mathtools
+\usepackage{mathtools}
+
+% Theorem environment
+\usepackage{amsthm}
+\theoremstyle{definition} % use normal font instead of italic in theorem environment
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+\usepackage{fullpage} % make margin much smaller
+
+% \T and \B are 'fudge factors' for the tabular environment.
+%
+\newcommand{\T}{\rule{0pt}{2.6ex}}
+\newcommand{\B}{\rule[-1.2ex]{0pt}{0pt}}
+
+% Shortcut commands
+\newcommand{\ceq}{\coloneqq} %colon-equals from mathtools
+% Pairs
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} 
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\inprod}{\langle}{\rangle}

@@ -1,0 +1,136 @@
+% A template for MCM contest solution
+% Make sure 'reedmcm.cls' and 'mcm.sty' are in the directory that you're running latex from.
+% These are meant to be used with pdflatex.
+% Note: natbib for bibliography.
+\documentclass[12pt]{reedmcm}
+\usepackage{mcm}
+
+%Title
+\title{\textbf{Title of the Solution}}
+\team{22555} % Put your team control number here. No actual names!
+\contest{MCM}
+\question{A or B} % Problem A or B?
+\date{\today}
+
+%Headers
+\usepackage{fancyhdr}
+\pagestyle{myheadings}
+\setlength{\headheight}{13.6pt}
+\setlength{\headsep}{20pt}
+\pagestyle{fancy}
+%%% Redefine the plain pagestyle so that it includes the ``page x of
+%%% y'' information, as well.
+\fancypagestyle{plain}{%
+  \fancyhf{} % clear all header and footer fields
+  \fancyhead[LO,RE]{Team \# 22555}
+  \fancyhead[RO,LE]{Page~\thepage\ of \pageref{LastPage}}
+  \fancyfoot[c]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+%%% Define the header as per the contest regulations.
+\fancyhead{}
+\fancyhead[LO,RE]{Team \# 22555}
+\fancyhead[RO,LE]{Page~\thepage\ of \pageref{LastPage}}
+
+
+\begin{document}
+
+% The Summary of your solution must be on the first page.
+\begin{summary}
+  The contest rules specify that you should include a one-page summary of your report. 
+  You want a brief restatement of the problem followed by a largely \emph{non-technical} description of what you've done.
+  Try to avoid using mathematical notation.
+  You probably want to write a few paragraphs, around half to two-thirds of a page.
+
+  From COMAP: 
+  "The summary is a very important part of your MCM paper. The
+    judges place considerable weight on the summary, and winning
+    papers are sometimes distinguished from other papers based on
+    the quality of the summary. To write a good summary, imagine
+    that a reader may choose whether to read the body of the paper
+    based on your summary. Thus, a summary should clearly describe
+    your approach to the problem and, most prominently, what your
+    most important conclusions were. The summary should inspire a
+    reader to learn the details of your work.  Your concise
+    presentation of the summary should inspire a reader to learn
+    the details of your work. Summaries that are mere restatements
+    of the contest problem, or are a cut-and-paste boilerplate
+    from the Introduction are generally considered to be
+    weak."
+
+    To Summarize:
+    \begin{description}
+      \item[Restatement Clarification of the Problem]
+        state in your own words what you are going to do.
+      \item[Assumptions with Rationale/Justification]
+        emphasize those assumptions that bear on the problem. List clearly all variables used in your model.
+      \item[Model Design and justification for type model used/developed.]
+      \item[Model Testing and Sensitivity Analysis, including error
+        analysis, etc.]
+      \item[Discuss strengths and weakness to your model or approach.] Include numerical results.
+      \item[Provide algorithms] in words, figures, or flow charts (as a step by step algorithmic approach) for all computer codes developed.
+    \end{description}
+  \end{summary}
+  % End of Summary
+
+% After the Summary, the actual solution starts.
+\maketitle
+\tableofcontents
+% \listoffigures
+% \listoftables  
+
+\section{Introduction}
+I've outlined sections and subsections in this template, but there's no reason that you should follow the structure.
+Read Cline's article for more.
+Write an introduction to your report here. 
+It should include a restatement of the problem, the history and context of the problem, and your work and results.
+Mention the traditional methods that are used to solve the particular kind of problems.
+
+some equation
+\begin{equation*}
+  \frac{−h^2}{2m} \frac{d^2\Phi}{dx^2} + kx^2\Phi = E\Phi
+\end{equation*}
+
+\section{The Model(s)}
+\subsection{Assumptions}
+Enumerate with roman numerals
+\begin{enumerate}[(i)]
+  \item un
+  \item deux
+  \item trois
+\end{enumerate}
+State the assumptions for your model.
+
+\section{Solution 1}
+
+\section{Solution 2}
+
+\section{Testing and Results}
+
+Example of tabular environment (using booktab environment. from wikibooks) 
+
+\begin{tabular}{llr}
+\toprule
+\multicolumn{2}{c}{Item} \\
+\cmidrule(r){1-2}
+Animal    & Description & Price (\$) \\
+\midrule
+Gnat      & per gram    & 13.65      \\
+          & each        & 0.01       \\
+Gnu       & stuffed     & 92.50      \\
+Emu       & stuffed     & 33.33      \\
+Armadillo & frozen      & 8.99       \\
+\bottomrule
+\end{tabular}
+
+\section{Conclusion}
+blah blah\citep{knuth}
+
+% The bibliography is in a separate file
+\renewcommand{\bibname}{References}
+\bibliographystyle{plainnat}
+\nocite{*}
+\bibliography{mcmbib}
+
+\end{document}
