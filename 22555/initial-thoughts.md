@@ -12,7 +12,6 @@
 
 ## Brownie ##
 - Conductivity (K-br)
-<<<<<<< HEAD
 - Expand? baking powder or not.
 - Cook at 325~350 F for 40 mins
 - Sugar burns at 350F (cream or tomato soup burns easily)
@@ -30,7 +29,6 @@
     1-1/2 cups flour
     1 teaspoon salt
     2-1/2 cups chopped pecans or walnuts, lightly toasted
->>>>>>> 32190373d065beb9222127e119d1d7b6bfec9a1d
 
 ## Pan ##
 - Area = Const
