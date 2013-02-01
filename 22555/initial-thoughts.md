@@ -1,6 +1,7 @@
 # MCM Problem A #
 ## Oven ##
 - Width/Length = Const
+- Height?
 - Power and Position of Heat Source
 - Thermostat
 - Constant temperature T-Br?
@@ -11,13 +12,25 @@
 
 ## Brownie ##
 - Conductivity (K-br)
-- Expand?
+<<<<<<< HEAD
+- Expand? baking powder or not.
+- Cook at 325~350 F for 40 mins
 - Sugar burns at 350F (cream or tomato soup burns easily)
 - sugar C12H22O11 => dehydration => Leaves carbon behind (which is black)
 - Burn = dehydration and oxidation? (e.g. freezer burn: water sublimates)
 - http://cooking.stackexchange.com/questions/10460/what-causes-sticking-and-what-can-i-do-to-reduce-food-sticking-to-my-cast-iron-s
 - http://www.edinformatics.com/math_science/science_of_cooking/why_food_sticks.htm
 - Flashpoints
+- Ingredients (24 servings) from http://baking.about.com/od/brownies/r/ultimate.htm :
+    8- 1 ounce squares of unsweetened chocolate
+    1 cup butter
+    5 eggs
+    3 cups sugar
+    1 tablespoon vanilla
+    1-1/2 cups flour
+    1 teaspoon salt
+    2-1/2 cups chopped pecans or walnuts, lightly toasted
+>>>>>>> 32190373d065beb9222127e119d1d7b6bfec9a1d
 
 ## Pan ##
 - Area = Const
@@ -35,5 +48,4 @@
 - Initial condition?
 
 ## Other Thoughts ##
-
 - If K-pan much higher than K-br, then we can ignore the time that heat conducts through K-pan
