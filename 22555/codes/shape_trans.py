@@ -154,4 +154,3 @@ def IterateList2D(g, init, N):
 #    """
 #    points = IterateList2D(g, init, N, args)
 #    matplotlib.pyplot.scatter(points[:,0], points[:,1], s=0.1, color='darkblue')
-

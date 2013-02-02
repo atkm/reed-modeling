@@ -1,0 +1,32 @@
+\documentclass[12pt]{article}
+\usepackage{mcm}
+
+\begin{document}
+\section{Shapes}
+\subsection{Area-preserving map}
+Let L be a linear transformation.
+If det(L) = 1 then it is an area-preserving map.
+Suppose m ~ Lebesgue measure.
+Area-preserving is equivalent to a measure-preserving map
+i.e. $m(L^{-1}) = m(L)$.
+
+\subsection{Arnold's Cat Map}
+We use Arnold's Map (commonly called "Arnold's Cat Map") to produce exotic shapes.
+Arnold's cat map is a chaotic, area-preserving map on a two-dimensional torus.
+\citep{hilborn}
+The Arnold's map $F$is defined as
+\begin{equation*}
+  F: (x,y) \mapsto (2x + y, x + y) \mbox{ (mod 1)}.
+\end{equation*}
+The corresponding matrix is
+\begin{equation*}
+A =
+\begin{pmatrix}
+    2 & 1  \\
+    1 & 1  
+  \end{pmatrix},
+\end{equation*}
+and clearly, $\det(A) = 1$.
+The Arnold's cat map is an efficient way to search through the solution space of shapes of a fixed area.
+
+\end{document}
