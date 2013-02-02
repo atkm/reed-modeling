@@ -1,5 +1,12 @@
 # shape_trans.py #
 ls = IterateList2D(Cat,(0.1,0.34),100)
-plot(ls[:,0],[:,1])
+normal plot (connect dots with lines): plot(ls[:,0],[:,1])
+scatter plot: plot(ls[:,0],[:,1],'o')
 
-- cla to clear plot
+- cla() to clear plot
+
+sq10 = sqshape(0.81,10) # create a boundary representation of a square of area 0.81; 10*4=40 points total
+shplot(sq10) # plot the point representation
+
+sq9 = sqcover(0.81, 9) # create a cover of a square
+cvplot(sq9) # plot the cover of a square

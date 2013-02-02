@@ -19,7 +19,7 @@ def Henon(init, args):
     y = b * x0
     return (x,y)
 
-def Cat(init,args=()):
+def Cat(init):
     # actually, there's no arg
     x0 = init[0]
     y0 = init[1]
@@ -30,7 +30,7 @@ def Cat(init,args=()):
 # pylab.plot(xaxis, graph) to plot
 # for example xasix = sp.linspace(0,1,100)
 
-def IterateList2D(g, init, N, args=()):
+def IterateList2D(g, init, N):
     """
     Iterate the function g(x, mu) N-1 times, starting at x0, so that the
     full trajectory contains N points.
@@ -47,7 +47,7 @@ def IterateList2D(g, init, N, args=()):
 
     result = [(x0, y0)]
     for i in range(N-1):
-      result.append(g(result[-1],args))
+      result.append(g(result[-1]))
 
     # Return a numpy array
     return np.array(result)
