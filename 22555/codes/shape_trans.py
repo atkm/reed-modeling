@@ -50,7 +50,7 @@ def cvplot(cover):
         p = pts[i]
         # Figure out the color of its patch
         cval = colors[i]
-        plt.plot((p[0]),(p[1]),'o',color='black')
+        plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
         subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
         plt.gca().add_patch(subsq)
         plt.savefig('shape.png')
