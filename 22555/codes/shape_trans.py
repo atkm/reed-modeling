@@ -3,26 +3,13 @@ import scipy.optimize
 import scipy.fftpack
 import matplotlib.pylab as plt
 import matplotlib.cm as colormap
+import matplotlib.patches as patch
+
 
 # pylab.plot(xaxis, graph) to plot
 # for example xasix = sp.linspace(0,1,100)
 
-def Henon(init, args):
-    """
-    args = (a,b)
-    init = (x0, y0)
-    Henon map 
-    f(x,y) = y + 1 - ax^n
-    g(x,y) = b*x
-    """
-    a = args[0]
-    b = args[1]
-    x0 = init[0]
-    y0 = init[1]
-    x = y0 + 1 - a*(x0**2)
-    y = b * x0
-    return (x,y)
-
+# Arnold's cat map
 def Cat(init):
     # actually, there's no arg
     x0 = init[0]
@@ -31,9 +18,13 @@ def Cat(init):
     y  = sp.mod(x0 + y0, 1)
     return (x,y)
 
-# element-wise application of Cat
+
+# vCat: Arnold's cat map vectorized.
+# element-wise application of Cat (for patch representation)
 def vCat(shape):
-    return sp.array([Cat(p) for p in shape])
+    pts = shape[0]
+    return (sp.array([Cat(p) for p in pts]), shape[1], shape[2])
+
 
 # a convenient plot function for shapes
 # shape == an array of lists of length 2 (x,y).
@@ -50,21 +41,75 @@ def shplot(shape):
 
 # cvplot: plot a cover
 def cvplot(cover):
+    n = sp.sqrt(cover[0].shape[0]) # num of points per line
     pts = cover[0]
     r   = cover[1]
-    for p in pts:
+    colors = cover[2]
+    for i in range(int(n**2)):
         # Plot the point
-        cval = p[0]*10 + p[1]
-        #cval = colormap.Spectral(cval)
+        p = pts[i]
+        # Figure out the color of its patch
+        cval = colors[i]
         plt.plot((p[0]),(p[1]),'o',color='black')
-        # Figure out where the four corners of the patch are
-        c1 = [p[0]-r, p[1]-r]
-        c2 = [p[0]+r, p[1]-r]
-        c3 = [p[0]-r, p[1]+r]
-        c4 = [p[0]+r, p[1]+r]
-        rect = sp.transpose(sp.vstack((c1,c2,c3,c4)))
-        print(rect)
-        plt.fill(rect[0],rect[1], 'b', alpha = 0.2)
+        subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
+        plt.gca().add_patch(subsq)
+        plt.savefig('shape.png')
+
+
+# sqcover = a representation of square by patches.
+# Each patch is associated with a color.
+# squares consisting of patches == cover
+# a cover is a triple (U, r, c). 
+# U: a collection of n^2 points evenly distributed over a square. 
+# r: the "radius" of a subsquare
+# c: the color of each patch
+def sqcover(A,n):
+    edge = sp.sqrt(A) # the length of an edge
+    d = edge/n # the distance between two adjacent points
+    r = d/2 # the "radius of "
+    end = edge - r # end point
+    base = sp.linspace(r, end, n)
+    first_line = sp.transpose(sp.vstack((base, r*sp.ones(n))))
+    increment = sp.transpose(sp.vstack((sp.zeros(n), d*sp.ones(n))))
+    pts = first_line
+    y_diff = increment
+    for i in range(n-1):
+        pts = sp.vstack((pts, first_line + y_diff))
+        y_diff = y_diff + increment
+    
+    # Color matter
+    colors = []
+    for p in pts:
+        cval = n*p[0] + p[1] # the x-coord has a higher weight
+        cval = colormap.Spectral(cval/((n+1)*end)) # normalize by the max value that cval can take.
+        colors.append(cval)
+
+    colors = sp.array(colors)
+
+    cover = (pts, r, colors)
+    return cover
+
+
+# IterateN: Iterate function g N-times with the initial condition init.
+def IterateN(g, init, N):
+    result = init
+    for i in range(N):
+        result = g(result)
+
+    # Return a numpy array
+    return result
+
+
+# GenShape: the simulation code
+# Create a square of area A, resolution mxm, iterate it N times.
+# Print out the result in a png
+def GenShape(g, A, m, N):
+    sq = sqcover(A, m)
+    new_shape = IterateN(vCat, sq, N)
+    cvplot(new_shape)
+    
+
+############ PROBABLY USELESS STUFF #############
 
 # sqshape == a representation of square by boundary points
 # Create a square of area A with n points on one edge
@@ -94,37 +139,6 @@ def sqshape(A,n):
     right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
     return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
 
-
-# sqcover = a representation of square by patches
-# squares consisting of patches == cover
-# a cover is a double (U, d). 
-# U: a collection of n^2 points evenly distributed over a square. 
-# d: the "radius" of a square. i.e. 2d = len(edge of a subsquare)
-def sqcover(A,n):
-    edge = sp.sqrt(A) # the length of an edge
-    r = edge/(2*n)
-    end = edge - r # end point
-    base = sp.linspace(r, end, n)
-    first_line = sp.transpose(sp.vstack((base, r*sp.ones(n))))
-    increment = sp.transpose(sp.vstack((sp.zeros(n), r*sp.ones(n))))
-    pts = first_line
-    y_diff = increment
-    for i in range(n):
-        pts = sp.vstack((pts, first_line + y_diff))
-        y_diff = y_diff + increment
-    
-    cover = (pts, r)
-    return cover
-
-def IterateN(g, init, N):
-    result = init
-    for i in range(N):
-        result = g(result)
-
-    # Return a numpy array
-    return result
-
-
 def IterateList2D(g, init, N):
     """
     Iterate the function g(x, mu) N-1 times, starting at x0, so that the
@@ -147,10 +161,7 @@ def IterateList2D(g, init, N):
     # Return a numpy array
     return np.array(result)
 
-#def PlotIterate2D(g, init, N, args=()):
-#    """
-#    Plots g, the diagonal y=x, and the boxes made of the segments
-#    [[x0,x0], [x0, g(x0)], [g(x0), g(x0)], [g(x0), g(g(x0))], ...
-#    """
-#    points = IterateList2D(g, init, N, args)
-#    matplotlib.pyplot.scatter(points[:,0], points[:,1], s=0.1, color='darkblue')
+# element-wise application of Cat (works for point representation)
+def vCat2(shape):
+    return sp.array([Cat(p) for p in shape])
+
