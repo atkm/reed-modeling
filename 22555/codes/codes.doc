@@ -8,5 +8,10 @@ scatter plot: plot(ls[:,0],[:,1],'o')
 sq10 = sqshape(0.81,10) # create a boundary representation of a square of area 0.81; 10*4=40 points total
 shplot(sq10) # plot the point representation
 
+# cover representation
 sq9 = sqcover(0.81, 9) # create a cover of a square
 cvplot(sq9) # plot the cover of a square
+
+# batch processing
+# GenShape(func, area~must be a square of something, resolution, #of iterations)
+GenShape(vCat, 0.64, 12, 10)
