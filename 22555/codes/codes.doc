@@ -1,0 +1,5 @@
+# shape_trans.py #
+ls = IterateList2D(Cat,(0.1,0.34),100)
+plot(ls[:,0],[:,1])
+
+- cla to clear plot
