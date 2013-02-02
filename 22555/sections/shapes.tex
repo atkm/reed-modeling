@@ -1,0 +1,33 @@
+\documentclass[12pt]{article}
+\usepackage{../mcm}
+
+\begin{document}
+\section{Shapes}
+
+\subsection{Assumptions}
+By the symmetry of the oven and positions of the heat sources, we may assume that an ideal shape must have the symmetry of some dihedral group.
+We begin with exploring shapes that have the dihedral group of order 8, $D_4$.
+
+\subsection{Arnold's Cat Map}
+We use Arnold's Map (commonly called "Arnold's Cat Map") to produce exotic shapes.
+Arnold's cat map is a chaotic, area-preserving map on a two-dimensional torus.
+\citep{hilborn}
+Area-preserving map is a measure-preserving map in a two-dimensional sense, i.e. $m(L^{-1}) = m(L)$, where $m$ is the Lebesgue measure.
+For example, suppose $L$ is a linear transformation.
+If $\det(L) = 1$ then it is an area-preserving map.
+The Arnold's map $F$is defined as
+\begin{equation*}
+  F: (x,y) \mapsto (2x + y, x + y) \mbox{ (mod 1)}.
+\end{equation*}
+The corresponding matrix is
+\begin{equation*}
+A =
+\begin{pmatrix}
+    2 & 1  \\
+    1 & 1  
+  \end{pmatrix},
+\end{equation*}
+and clearly, $\det(A) = 1$.
+The Arnold's cat map is an efficient way to search through the solution space of shapes of a fixed area.
+
+\end{document}
