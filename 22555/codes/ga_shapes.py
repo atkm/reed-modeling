@@ -1,6 +1,7 @@
 import scipy as sp
 import scipy.optimize
 import scipy.fftpack
+import mpl_toolkits.mplot3d.axes3d as axs
 import matplotlib.pylab as plt
 import matplotlib.cm as colormap
 import matplotlib.patches as patch
@@ -12,21 +13,24 @@ import time
 
 # Basic shape class: just shape class without mutation
 # More geared towards consideration of shapes of walls 
-# Walls = linear (ax: 0 deg = vertical, >0 deg = slant), nonlinear (x^n: )
+# side = linear (ax: 0 deg = vertical, >0 deg = slant), nonlinear (x^n: )
 class BasicShape:
-    def __init__(self, kind, A, n, wall, param):
+    def __init__(self, kind, A, n, side, height, param):
         if kind == 'square':
-             model = sqshape(A,n)
+             model = self.sqshape(A,n)
 
-        self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + str(round(time.time())) + '.png'
+        self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + '_' + side + '_' + str(param) + '_' + str(round(time.time())) + '.png'
         self.pts = model
         self.resolution = len(self.pts) # total num of points 
-        if wall == 'linear':
-            self.wall = lambda x: param * x
-        elif: wall == 'nonlinear':
-            self.wall = lambda x: x**param
+        if side == 'linear':
+            wall_func = lambda x: x / param
+        elif side == 'nonlinear':
+            wall_func = lambda x: x ** (1/param)
         else:
             raise Exception("wall has to be either linear or nonlinear")
+
+        edge = sp.sqrt(A)
+        self.wall = self.make_wall(self.pts, edge, height, wall_func)
 
 
     # sqshape == a representation of square by boundary points
@@ -41,24 +45,64 @@ class BasicShape:
     #  l       r   
     #  l b b b b   
     #
-    def sqshape(A,n):
+    def sqshape(self, A,n):
         edge_len = sp.sqrt(A) # the length of each edge
-            base = sp.linspace(0, edge_len, n+1) # n+1 points, equally spaced
-            # create left edge
-            left = sp.transpose(sp.vstack((sp.zeros(n), base[0:-1])) )
-            # top edge
-            top_y = base[-1] # the height of the square
-            top = sp.transpose(sp.vstack((base[0:-1],top_y * sp.ones(n))))
-            # bottom edge
-            bottom = sp.transpose((base[1:], sp.vstack((sp.zeros(n)))))
+        base = sp.linspace(0, edge_len, n+1) # n+1 points, equally spaced
+        # create left edge
+        left = sp.transpose(sp.vstack((sp.zeros(n), base[0:-1])) )
+        # top edge
+        top_y = base[-1] # the height of the square
+        top = sp.transpose(sp.vstack((base[0:-1],top_y * sp.ones(n))))
+        # bottom edge
+        bottom = sp.transpose((base[1:], sp.vstack((sp.zeros(n)))))
 
-            # right edge
-            right_x = top_y # the x-coordinate of the right edge
-            right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
-            return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
+        # right edge
+        right_x = top_y # the x-coordinate of the right edge
+        right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
+        
+        return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
 
-    def shplot_nosave(shape):
+    # make_wall()
+    def make_wall(self, pts, edge, height, func):
+        wall = []
+        for p in self.pts:
+            if p[0] == 0: # the left edge
+                if p[1] == 0: # the bottom left
+                    wall.append([(-1)/sp.sqrt(2)*func(height), (-1)/sp.sqrt(2)*func(height), height])
+                elif p[1] == 1: # the top left
+                    wall.append([ p[0] + (-1)/sp.sqrt(2)*func(height), p[1] + func(height)/sp.sqrt(2), height])
+                else: # others on the left edge
+                    wall.append([ p[0] - func(height), p[1], height])
+            elif p[1] == 1: # the top edge
+                if p[0] == 1: # the top right
+                    wall.append([ p[0] + func(height)/sp.sqrt(2), p[1] + func(height)/sp.sqrt(2), height])
+                else: # others on the top edge
+                    wall.append([ p[0], p[1] + func(height), height])
+            elif p[0] == 1: # the right edge
+                if p[1] == 0: # the bottom right
+                    wall.append([ p[0] + func(height)/sp.sqrt(2), p[1] - func(height)/sp.sqrt(2), height])
+                else: # others on the right edge
+                    wall.append([ p[0] + func(height), p[1], height])
+            else: # the bottom edge
+                wall.append([ p[0], p[1] - func(height), height])
+
+        return sp.array(wall)
+
+    def shplot3d(self):
+        fig = plt.figure()
+        space = axs.Axes3D(fig)
+        # plot the wall 
+        xyz = sp.transpose(self.wall)
+        space.scatter(xyz[0],xyz[1],xyz[2])
+        # plot the pan bottom
+        xyz = sp.vstack((sp.transpose(self.pts), sp.zeros(self.resolution)))
+        space.scatter(xyz[0],xyz[1],xyz[2])
+        plt.show()
+
+
+    def shplot_nosave(self):
     # plot points
+        shape = self.pts
         plt.plot(shape[:,0], shape[:,1],'o', color='red')
         # plot line segments
         pt1 = shape[0]
@@ -70,7 +114,7 @@ class BasicShape:
 
     # show plot in interactive mode
     def show(self):
-        shplot_nosave(self)
+        self.shplot_nosave()
 
     # save plot in a png
     def save(self):
@@ -265,7 +309,4 @@ def GenShape(g, A, m, N, name):
         new_shape = sq
 
     cvplot(new_shape, name)
-    
-
-
 
