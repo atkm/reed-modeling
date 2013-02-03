@@ -9,53 +9,6 @@ import matplotlib.patches as patch
 # pylab.plot(xaxis, graph) to plot
 # for example xasix = sp.linspace(0,1,100)
 
-# Arnold's cat map
-def Cat(init):
-    # actually, there's no arg
-    x0 = init[0]
-    y0 = init[1]
-    x  = sp.mod(2*x0 + y0, 1)
-    y  = sp.mod(x0 + y0, 1)
-    return (x,y)
-
-
-# vCat: Arnold's cat map vectorized.
-# element-wise application of Cat (for patch representation)
-def vCat(shape):
-    pts = shape[0]
-    return (sp.array([Cat(p) for p in pts]), shape[1], shape[2])
-
-
-# a convenient plot function for shapes
-# shape == an array of lists of length 2 (x,y).
-def shplot(shape):
-    # plot points
-    plt.plot(shape[:,0], shape[:,1],'o', color='red')
-    # plot line segments
-    pt1 = shape[0]
-    for i in range(len(shape)-1):
-        pt2 = shape[i + 1]
-        ptm = sp.vstack((pt1,pt2))
-        plt.plot(ptm[:,0], ptm[:,1])
-        pt1 = pt2
-
-# cvplot: plot a cover
-def cvplot(cover):
-    n = sp.sqrt(cover[0].shape[0]) # num of points per line
-    pts = cover[0]
-    r   = cover[1]
-    colors = cover[2]
-    for i in range(int(n**2)):
-        # Plot the point
-        p = pts[i]
-        # Figure out the color of its patch
-        cval = colors[i]
-        plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
-        subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
-        plt.gca().add_patch(subsq)
-        plt.savefig('shape.png')
-
-
 # sqcover = a representation of square by patches.
 # Each patch is associated with a color.
 # squares consisting of patches == cover
@@ -89,12 +42,90 @@ def sqcover(A,n):
     cover = (pts, r, colors)
     return cover
 
+# circle
+def circle(A, n):
+    r = sp.sqrt(A) # the radius
+
+# Chirikov standard map
+# K > 1 is pretty chaotic. 
+# use K = 0.5 as a default
+def Kick(init,param):
+    k = param
+    x0 = init[0] * 2*sp.pi
+    y0 = init[1] * 2*sp.pi
+    # tweaked from the default: y = sp.mod(y0 + k * sp.sin(x0), 2*sp.pi)
+    y = sp.mod(1.05 * sp.pi + y0 + k * sp.sin(x0), 2*sp.pi)
+    x = sp.mod(x0 + y, 2*sp.pi)
+    return (x/(2*sp.pi),y/(2*sp.pi))
+
+def vKick(shape, param):
+    pts = shape[0]
+    return (sp.array([Kick(p,param) for p in pts]), shape[1], shape[2])
+
+# Arnold's cat map
+# default param = 2
+def Cat(init,param=2):
+    a  = param
+    b  = a - 1
+    x0 = init[0]
+    y0 = init[1]
+    x  = sp.mod(a*x0 + b*y0, 1)
+    y  = sp.mod(x0 + y0, 1)
+    return (x,y)
+
+# vCat: Arnold's cat map vectorized.
+# element-wise application of Cat (for patch representation)
+# Increasing param would increase the x-orientation of the distortion
+def vCat(shape,param=2):
+    pts = shape[0]
+    return (sp.array([Cat(p,param) for p in pts]), shape[1], shape[2])
+
+
+# cvplot: plot a cover
+def cvplot(cover, name):
+    n = sp.sqrt(cover[0].shape[0]) # num of points per line
+    pts = cover[0]
+    r   = cover[1]
+    colors = cover[2]
+    for i in range(int(n**2)):
+        # Plot the point
+        p = pts[i]
+        # Figure out the color of its patch
+        cval = colors[i]
+        plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
+        subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
+        plt.gca().add_patch(subsq)
+        plt.savefig(name)
+
+# interactive version
+def cvplot_nosave(cover):
+    n = sp.sqrt(cover[0].shape[0]) # num of points per line
+    pts = cover[0]
+    r   = cover[1]
+    colors = cover[2]
+    for i in range(int(n**2)):
+        # Plot the point
+        p = pts[i]
+        # Figure out the color of its patch
+        cval = colors[i]
+        plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
+        subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
+        plt.gca().add_patch(subsq)
+
+# animation in interactive version
+# NOT WORKING
+def cvanimate(cover,N):
+    cvplot_nosave(cover)
+    for i in range(N):
+        cover = vCat(cover,param)
+        plt.cla()
+        cvplot_nosave(cover)
 
 # IterateN: Iterate function g N-times with the initial condition init.
-def IterateN(g, init, N):
+def IterateN(g, init, N, param):
     result = init
     for i in range(N):
-        result = g(result)
+        result = g(result,param)
 
     # Return a numpy array
     return result
@@ -103,10 +134,14 @@ def IterateN(g, init, N):
 # GenShape: the simulation code
 # Create a square of area A, resolution mxm, iterate it N times.
 # Print out the result in a png
-def GenShape(g, A, m, N):
+def GenShape(g, A, m, N, name):
     sq = sqcover(A, m)
-    new_shape = IterateN(vCat, sq, N)
-    cvplot(new_shape)
+    if (N!=0):
+        new_shape = IterateN(vCat, sq, N)
+    else:
+        new_shape = sq
+
+    cvplot(new_shape, name)
     
 
 ############ PROBABLY USELESS STUFF #############
@@ -164,4 +199,17 @@ def IterateList2D(g, init, N):
 # element-wise application of Cat (works for point representation)
 def vCat2(shape):
     return sp.array([Cat(p) for p in shape])
+
+# a convenient plot function for shapes
+# shape == an array of lists of length 2 (x,y).
+def shplot(shape):
+    # plot points
+    plt.plot(shape[:,0], shape[:,1],'o', color='red')
+    # plot line segments
+    pt1 = shape[0]
+    for i in range(len(shape)-1):
+        pt2 = shape[i + 1]
+        ptm = sp.vstack((pt1,pt2))
+        plt.plot(ptm[:,0], ptm[:,1])
+        pt1 = pt2
 
