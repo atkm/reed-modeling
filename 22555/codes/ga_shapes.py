@@ -149,7 +149,7 @@ class Shape:
 
     # apply Cat Map
     def cat(self, param=2):
-        self.pts = vKick(self.pts, param)
+        self.pts = vCat(self.pts, param)
 
     # mutation: either Cat or Kick map
     def mutate(self):
@@ -291,10 +291,10 @@ def IterRand(init):
     rnum = random.randint(0,2) # generate 0 or 1
     if rnum==1:
         g = vCat
-        param = 5*random.random() # generate a parameter between 0 and 5
+        param = 10*random.random() # generate a parameter between 0 and 10
     else:
         g = vKick
-        param = random.random() # generate a parameter between 0 and 1
+        param = 2*sp.pi*random.random() # generate a parameter between 0 and 2pi
 
     return g(init,param)
 

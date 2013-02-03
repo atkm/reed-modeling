@@ -37,40 +37,34 @@
 \begin{document}
 
 % The Summary of your solution must be on the first page.
+%  The contest rules specify that you should include a one-page summary of your report. 
+%  You want a brief restatement of the problem followed by a largely \emph{non-technical} description of what you've done.
+%  Try to avoid using mathematical notation.
+%  You probably want to write a few paragraphs, around half to two-thirds of a page.
+%  From COMAP: 
+%  "The summary is a very important part of your MCM paper. The
+%    judges place considerable weight on the summary, and winning
+%    papers are sometimes distinguished from other papers based on
+%    the quality of the summary. To write a good summary, imagine
+%    that a reader may choose whether to read the body of the paper
+%    based on your summary. Thus, a summary should clearly describe
+%    your approach to the problem and, most prominently, what your
+%    most important conclusions were. The summary should inspire a
+%    reader to learn the details of your work.  Your concise
+%    presentation of the summary should inspire a reader to learn
+%    the details of your work. Summaries that are mere restatements
+%    of the contest problem, or are a cut-and-paste boilerplate
+%    from the Introduction are generally considered to be
+%    weak."
+
 \begin{summary}
-  The contest rules specify that you should include a one-page summary of your report. 
-  You want a brief restatement of the problem followed by a largely \emph{non-technical} description of what you've done.
-  Try to avoid using mathematical notation.
-  You probably want to write a few paragraphs, around half to two-thirds of a page.
+  Genetic algorithm determines the shape that is most suitable for even heat distribution.
+  The heat distribution on the pan and brownie is computed by the diffusion equation.
+  We solve the diffusion equation numerically in general using the finite-difference method.
+  We also solve the diffusion equation analytically for a special case to verify our numerical solution.
+  Chaotic transformations, Arnold's Cat map and Chirikov Standard map, produces random shapes.
 
-  From COMAP: 
-  "The summary is a very important part of your MCM paper. The
-    judges place considerable weight on the summary, and winning
-    papers are sometimes distinguished from other papers based on
-    the quality of the summary. To write a good summary, imagine
-    that a reader may choose whether to read the body of the paper
-    based on your summary. Thus, a summary should clearly describe
-    your approach to the problem and, most prominently, what your
-    most important conclusions were. The summary should inspire a
-    reader to learn the details of your work.  Your concise
-    presentation of the summary should inspire a reader to learn
-    the details of your work. Summaries that are mere restatements
-    of the contest problem, or are a cut-and-paste boilerplate
-    from the Introduction are generally considered to be
-    weak."
 
-    To Summarize:
-    \begin{description}
-      \item[Restatement Clarification of the Problem]
-        state in your own words what you are going to do.
-      \item[Assumptions with Rationale/Justification]
-        emphasize those assumptions that bear on the problem. List clearly all variables used in your model.
-      \item[Model Design and justification for type model used/developed.]
-      \item[Model Testing and Sensitivity Analysis, including error
-        analysis, etc.]
-      \item[Discuss strengths and weakness to your model or approach.] Include numerical results.
-      \item[Provide algorithms] in words, figures, or flow charts (as a step by step algorithmic approach) for all computer codes developed.
-    \end{description}
   \end{summary}
   % End of Summary
 
@@ -81,9 +75,21 @@
 % \listoftables  
 
 \section{Introduction}
-I've outlined sections and subsections in this template, but there's no reason that you should follow the structure.
-Read Cline's article for more.
-Write an introduction to your report here. 
+SciPy to simulate the heat equation.
+
+To Summarize:
+\begin{description}
+  \item[Restatement Clarification of the Problem]
+    state in your own words what you are going to do.
+  \item[Assumptions with Rationale/Justification]
+    emphasize those assumptions that bear on the problem. List clearly all variables used in your model.
+  \item[Model Design and justification for type model used/developed.]
+  \item[Model Testing and Sensitivity Analysis, including error
+    analysis, etc.]
+  \item[Discuss strengths and weakness to your model or approach.] Include numerical results.
+  \item[Provide algorithms] in words, figures, or flow charts (as a step by step algorithmic approach) for all computer codes developed.
+\end{description}
+
 It should include a restatement of the problem, the history and context of the problem, and your work and results.
 Mention the traditional methods that are used to solve the particular kind of problems.
 
@@ -102,9 +108,10 @@ Enumerate with roman numerals
 \end{enumerate}
 State the assumptions for your model.
 
-\section{Solution 1}
+\section{The Optimal Wall}
 
-\section{Solution 2}
+\section{The Heat Equation}
+
 
 \section{Testing and Results}
 
@@ -125,7 +132,8 @@ Armadillo & frozen      & 8.99       \\
 \end{tabular}
 
 \section{Conclusion}
-blah blah\citep{knuth}
+Need a connected component algorithm.
+Flood-fill algorithm is an example of such an algorithm.
 
 % The bibliography is in a separate file
 \renewcommand{\bibname}{References}
