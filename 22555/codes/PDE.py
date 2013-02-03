@@ -64,7 +64,6 @@ def heating_up(m,n, tf, c1, c2,w, Ti, Tb,delta_t):
         print '\n'
     print S2
 
-
 def u_next3(S,i,j,k,c, delta_t, delta_s,m,n,l):
        return  S[i,j,k] + c*delta_t/delta_s**2*(S[min(i+1,m-1),j,k] + S[i, min(j+1,n-1),k] + S[i,j,min(k+1,l-1)] + S[max(i-1,0),j,k] + S[i, max(j-1,0), k] + S[i,j,max(k-1,0)]  - 6*S[i,j,k])
 
@@ -80,27 +79,20 @@ def bindM3(S, Tb):
                     M[i,j,k] = Tb
     return M
 
-def init_con3(In, Ti,w):
-    m= In.shape[0]
+
+
+def init_con3(In, Ti):
+    m = In.shape[0]
     n = In.shape[1]
     l = In.shape[2]
     for i in range(m):
         for j in range(n):
             for k in range(l):
-                if 0<i<=w and w<=j<n-w and w<=k<l-w:
+                if not (0 in [i,j,k] or 1 in [m-i,n-j,l-k]):
                     In[i,j,k] = Ti
-                if 0<j<=w and w <=i<m-w and w <=k<l-w:
-                    In[i,j,k] = Ti
-                if 0 < k <= w and w<=i<m-w and w<=j<n-w:
-                    In[i,j,k] = Ti
-                if m-1-w <= i <m-1 and w<=j<n-w and w <=k< l-w:
-                    In[i,j,k] = Ti
-                if n-1-w <= j < n-1 and w<= i < m-w and w <= k < l-w:
-                    In[i,j,k] = Ti
-                if k == l-1:
-                    In[i,j,k] = Ti
-    return In              
-
+                else:
+                    In[i,j,k] = 0
+    return In                
 
 
 def bound_list(shape):
@@ -156,39 +148,21 @@ def heating_up3(m,n,l, tf, c1, c2,w, Ti, Tb,delta_t):
         sleep(5)
     # set initial and boundary conditions:
     S = bindM3(S, Tb)
-    init_con3(In, Ti,w)
+    init_con3(In, Ti)
     S1 = S + In 
     S2 = S1.copy()
     for t in Time[:-1]:
         for i in range(m):
             for j in range(n):
-                S2[i,j,k] = u_next3(S1, i,j,k,Cons[i,j,k],delta_t, delta_s,m,n,l)
-                S2 = bindM3(S2, Tb)
-                S1 = S2.copy()
-        print S2
-        print '\n'
+                for k in range(l):
+                    S2[i,j,k] = u_next3(S1, i,j,k,Cons[i,j,k],delta_t, delta_s,m,n,l)
+                    S2 = bindM3(S2, Tb)
+                    S1 = S2.copy()
+        for i in range(l):
+            print S2[:,:,l-i]
+            print '\n'
+        print '\n\n'
     print S2
-
-#def init_con3(In, Ti,w):
-#    m= In.shape[0]
-#    n = In.shape[1]
-#    l = In.shape[2]
-#    for i in range(m):
-#        for j in range(n):
-#            for k in range(l):
-#                if 0<i<=w and w<=j<n-w and w<=k<l-w:
-#                    In[i,j,k] = Ti
-#                if 0<j<=w and w <=i<m-w and w <=k<l-w:
-#                    In[i,j,k] = Ti
-#                if 0 < k <= w and w<=i<m-w and w<=j<n-w:
-#                    In[i,j,k] = Ti
-#                if m-1-w <= i <m-1 and w<=j<n-w and w <=k< l-w:
-#                    In[i,j,k] = Ti
-#                if n-1-w <= j < n-1 and w<= i < m-w and w <= k < l-w:
-#                    In[i,j,k] = Ti
-#                if k == l-1:
-#                    In[i,j,k] = Ti
-#    return In              
 
 
 
