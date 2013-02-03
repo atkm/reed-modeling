@@ -1,7 +1,7 @@
 import scipy as sp
 import scipy.optimize
 import scipy.fftpack
-import mpl_toolkits.mplot3d.axes3d as axs
+#import mpl_toolkits.mplot3d.axes3d as axs
 import matplotlib.pylab as plt
 import matplotlib.cm as colormap
 import matplotlib.patches as patch
@@ -29,8 +29,8 @@ class BasicShape:
         else:
             raise Exception("wall has to be either linear or nonlinear")
 
-        edge = sp.sqrt(A)
-        self.wall = self.make_wall(self.pts, edge, height, wall_func)
+        self.edge = sp.sqrt(A)
+        self.wall = self.make_wall(self.pts, self.edge, height, wall_func)
 
 
     # xyzxyz: return a 2-tuple of the xyz coords of the bottom points and those for the top.
