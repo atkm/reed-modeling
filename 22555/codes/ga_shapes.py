@@ -5,10 +5,114 @@ import matplotlib.pylab as plt
 import matplotlib.cm as colormap
 import matplotlib.patches as patch
 import random
-
+import time
 
 # pylab.plot(xaxis, graph) to plot
 # for example xasix = sp.linspace(0,1,100)
+
+# Basic shape class: just shape class without mutation
+# More geared towards consideration of shapes of walls 
+# Walls = linear (ax: 0 deg = vertical, >0 deg = slant), nonlinear (x^n: )
+class BasicShape:
+    def __init__(self, kind, A, n, wall, param):
+        if kind == 'square':
+             model = sqshape(A,n)
+
+        self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + str(round(time.time())) + '.png'
+        self.pts = model
+        self.resolution = len(self.pts) # total num of points 
+        if wall == 'linear':
+            self.wall = lambda x: param * x
+        elif: wall == 'nonlinear':
+            self.wall = lambda x: x**param
+        else:
+            raise Exception("wall has to be either linear or nonlinear")
+
+
+    # sqshape == a representation of square by boundary points
+    # Create a square of area A with n points on one edge
+    # (0,0) is the bottom left corner
+    # Build points in this order:
+    # bottom left -> top left -> top right -> bottom right -> bottom left
+    # top, left, bottom, right are defined as:
+    #  t t t t r    
+    #  l       r     
+    #  l       r   
+    #  l       r   
+    #  l b b b b   
+    #
+    def sqshape(A,n):
+        edge_len = sp.sqrt(A) # the length of each edge
+            base = sp.linspace(0, edge_len, n+1) # n+1 points, equally spaced
+            # create left edge
+            left = sp.transpose(sp.vstack((sp.zeros(n), base[0:-1])) )
+            # top edge
+            top_y = base[-1] # the height of the square
+            top = sp.transpose(sp.vstack((base[0:-1],top_y * sp.ones(n))))
+            # bottom edge
+            bottom = sp.transpose((base[1:], sp.vstack((sp.zeros(n)))))
+
+            # right edge
+            right_x = top_y # the x-coordinate of the right edge
+            right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
+            return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
+
+    def shplot_nosave(shape):
+    # plot points
+        plt.plot(shape[:,0], shape[:,1],'o', color='red')
+        # plot line segments
+        pt1 = shape[0]
+        for i in range(len(shape)-1):
+            pt2 = shape[i + 1]
+            ptm = sp.vstack((pt1,pt2))
+            plt.plot(ptm[:,0], ptm[:,1])
+            pt1 = pt2
+
+    # show plot in interactive mode
+    def show(self):
+        shplot_nosave(self)
+
+    # save plot in a png
+    def save(self):
+        #shplot(self,self.name)
+        pass
+
+
+class Shape:
+    def __init__(self, kind, A, n):
+        if kind == 'square':
+             model = sqcover(A,n)
+
+        self.name = kind + '_' + str(A) + '_' + str(n) + str(round(time.time())) + '.png'
+        self.pts = model[0]
+        self.rad = model[1]
+        self.colors = model[2]
+        self.resolution = len(self.pts) # total num of points 
+        self.cover = (self.pts, self.rad, self.colors)
+
+    # apply Kick Map with parameter (default 0.5)
+    def kick(self, param=0.5):
+        self.pts = vKick(self.pts, param)
+
+    # apply Cat Map
+    def cat(self, param=2):
+        self.pts = vKick(self.pts, param)
+
+    # mutation: either Cat or Kick map
+    def mutate(self):
+        self.pts = IterRand(self.pts)
+    # mutation N times 
+    def mutateN(self, N): # mutate N times
+        self.pts = IterRandN(self.pts, N)
+
+    # show plot in interactive mode
+    def show(self):
+        cvplot_nosave(self)
+
+    # save plot in a png
+    def save(self):
+        cvplot(self,self.name)
+
 
 # sqcover = a representation of square by patches.
 # Each patch is associated with a color.
@@ -59,9 +163,8 @@ def Kick(init,param):
     x = sp.mod(x0 + y, 2*sp.pi)
     return (x/(2*sp.pi),y/(2*sp.pi))
 
-def vKick(shape, param):
-    pts = shape[0]
-    return (sp.array([Kick(p,param) for p in pts]), shape[1], shape[2])
+def vKick(pts, param):
+    return sp.array([Kick(p,param) for p in pts])
 
 # Arnold's cat map
 # default param = 2
@@ -77,17 +180,16 @@ def Cat(init,param=2):
 # vCat: Arnold's cat map vectorized.
 # element-wise application of Cat (for patch representation)
 # Increasing param would increase the x-orientation of the distortion
-def vCat(shape,param=2):
-    pts = shape[0]
-    return (sp.array([Cat(p,param) for p in pts]), shape[1], shape[2])
+def vCat(pts,param=2):
+    return sp.array([Cat(p,param) for p in pts])
 
 
-# cvplot: plot a cover
-def cvplot(cover, name):
-    n = sp.sqrt(cover[0].shape[0]) # num of points per line
-    pts = cover[0]
-    r   = cover[1]
-    colors = cover[2]
+# cvplot: plot a shape
+def cvplot(shape, name):
+    n = sp.sqrt(shape.resolution) # num of points per line
+    pts = shape.pts
+    r   = shape.rad
+    colors = shape.colors
     for i in range(int(n**2)):
         # Plot the point
         p = pts[i]
@@ -99,11 +201,11 @@ def cvplot(cover, name):
         plt.savefig(name)
 
 # interactive version
-def cvplot_nosave(cover):
-    n = sp.sqrt(cover[0].shape[0]) # num of points per line
-    pts = cover[0]
-    r   = cover[1]
-    colors = cover[2]
+def cvplot_nosave(shape):
+    n = sp.sqrt(shape.resolution) # num of points per line
+    pts = shape.pts
+    r   = shape.rad
+    colors = shape.colors
     for i in range(int(n**2)):
         # Plot the point
         p = pts[i]
@@ -141,7 +243,7 @@ def IterRand(init):
         g = vKick
         param = random.random() # generate a parameter between 0 and 1
 
-    return g(result,param)
+    return g(init,param)
 
 
 # IterRandN: Randomly iterate N times
@@ -165,72 +267,5 @@ def GenShape(g, A, m, N, name):
     cvplot(new_shape, name)
     
 
-############ PROBABLY USELESS STUFF #############
 
-# sqshape == a representation of square by boundary points
-# Create a square of area A with n points on one edge
-# (0,0) is the bottom left corner
-# Build points in this order:
-# bottom left -> top left -> top right -> bottom right -> bottom left
-# top, left, bottom, right are defined as:
-#  t t t t r    
-#  l       r     
-#  l       r   
-#  l       r   
-#  l b b b b   
-#
-def sqshape(A,n):
-    edge_len = sp.sqrt(A) # the length of each edge
-    base = sp.linspace(0, edge_len, n+1) # n+1 points, equally spaced
-    # create left edge
-    left = sp.transpose(sp.vstack((sp.zeros(n), base[0:-1])) )
-    # top edge
-    top_y = base[-1] # the height of the square
-    top = sp.transpose(sp.vstack((base[0:-1],top_y * sp.ones(n))))
-    # bottom edge
-    bottom = sp.transpose((base[1:], sp.vstack((sp.zeros(n)))))
-
-    # right edge
-    right_x = top_y # the x-coordinate of the right edge
-    right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
-    return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
-
-def IterateList2D(g, init, N):
-    """
-    Iterate the function g(x, mu) N-1 times, starting at x0, so that the
-    full trajectory contains N points.
-    Returns the entire list 
-    (x, g(x), g(g(x)), ... g(g(...(g(x))...))). 
-
-    use
-        pylab.hist(attractorXs, bins=500, normed=1)
-        pylab.show()
-    to see the density of points.
-    """
-    x0 = init[0]
-    y0 = init[1]
-
-    result = [(x0, y0)]
-    for i in range(N-1):
-      result.append(g(result[-1]))
-
-    # Return a numpy array
-    return np.array(result)
-
-# element-wise application of Cat (works for point representation)
-def vCat2(shape):
-    return sp.array([Cat(p) for p in shape])
-
-# a convenient plot function for shapes
-# shape == an array of lists of length 2 (x,y).
-def shplot(shape):
-    # plot points
-    plt.plot(shape[:,0], shape[:,1],'o', color='red')
-    # plot line segments
-    pt1 = shape[0]
-    for i in range(len(shape)-1):
-        pt2 = shape[i + 1]
-        ptm = sp.vstack((pt1,pt2))
-        plt.plot(ptm[:,0], ptm[:,1])
-        pt1 = pt2
 
