@@ -23,7 +23,7 @@ def init_con(In, Ti,w):
     n = In.shape[1]
     for i in range(m):
         for j in range(n):
-            if (i > w-1 and j > w-1) and (i < m-1 and j < n-1):
+            if (i >= w and j >= w) and (i < m-1 and j < n-1):
                 In[i,j] = Ti
 
 def heating_up(m,n, tf, c1, c2,w, Ti, Tb,delta_t):
@@ -34,9 +34,14 @@ def heating_up(m,n, tf, c1, c2,w, Ti, Tb,delta_t):
     # define conduction constants
     for i in range(m):
         for j in range(n):
-            if i <= w-1 or j <= w-1 or i > m-w-1:
+            Cons[i,0] = Cons[0,j] = Cons[m-1,j] = Cons[i,n-1] = 0.024
+            if (0 < i <= w and 0 < j < n-1) or (0 < j <= w and 0<i<m-2) or (m-w-1 < i <= m-2 and 0<j<n-2): 
                 Cons[i,j] = c1
-            else:
+                Cons[m-i-1,j] = c1
+
+    for i in range(m):
+        for j in range(n):
+            if Cons[i,j] == 0:
                 Cons[i,j] = c2
     # temoral mesh
     Time = sp.arange(1, tf+2)
@@ -55,6 +60,9 @@ def heating_up(m,n, tf, c1, c2,w, Ti, Tb,delta_t):
                 S2[i,j] = u_next(S1, i,j,Cons[i,j],delta_t, delta_s,m,n)
                 S2 = bindM(S2, Tb)
                 S1 = S2.copy()
-        print (100*S2)
+        print S2
         print '\n'
     print S2
+
+
+
