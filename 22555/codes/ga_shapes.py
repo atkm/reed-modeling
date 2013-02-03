@@ -1,7 +1,7 @@
 import scipy as sp
 import scipy.optimize
 import scipy.fftpack
-#import mpl_toolkits.mplot3d.axes3d as axs
+import mpl_toolkits.mplot3d.axes3d as axs
 import matplotlib.pylab as plt
 import matplotlib.cm as colormap
 import matplotlib.patches as patch
@@ -22,15 +22,16 @@ class BasicShape:
         self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + '_' + side + '_' + str(param) + '_' + str(round(time.time())) + '.png'
         self.pts = model
         self.resolution = len(self.pts) # total num of points 
+        self.edge = sp.sqrt(A)
         if side == 'linear':
-            wall_func = lambda x: x / param
+            wall_graph = lambda x: x / param
         elif side == 'nonlinear':
-            wall_func = lambda x: x ** (1/param)
+            wall_graph = lambda x: x ** (1/param)
         else:
             raise Exception("wall has to be either linear or nonlinear")
+        self.wall_func = lambda h: self.make_wall(self.pts, self.edge, h, wall_graph)
 
-        self.edge = sp.sqrt(A)
-        self.wall = self.make_wall(self.pts, self.edge, height, wall_func)
+        self.wall = self.wall_func(height)
 
 
     # xyzxyz: return a 2-tuple of the xyz coords of the bottom points and those for the top.
@@ -135,7 +136,7 @@ class Shape:
         if kind == 'square':
              model = sqcover(A,n)
 
-        self.name = kind + '_' + str(A) + '_' + str(n) + str(round(time.time())) + '.png'
+        self.name = kind + '_' + str(A) + '_' + str(n) + '_' + str(round(time.time())) + '.png'
         self.pts = model[0]
         self.rad = model[1]
         self.colors = model[2]
