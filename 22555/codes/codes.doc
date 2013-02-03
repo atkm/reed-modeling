@@ -10,6 +10,10 @@ sq10 = sqshape(0.81,10) # create a boundary representation of a square of area 0
 shplot(sq10) # plot the point representation
 
 # cover representation
+sq10.show()
+sq10.save()
+
+# cover representation (old)
 sq9 = sqcover(0.81, 9) # create a cover of a square
 cvplot(sq9) # plot the cover of a square
 len(sq9) # the number of patches
