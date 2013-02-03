@@ -10,11 +10,14 @@ sq10 = sqshape(0.81,10) # create a boundary representation of a square of area 0
 shplot(sq10) # plot the point representation
 
 # cover representation
+sq10 = BasicShape('square', 1, 10, 'linear', 0.3, 1)
+sq10.wall_func(3) # figure out the points on a wall corresponding to height 3
+sq10.xyzxyz() # return the points on the bottom and top.
 sq10.show()
 sq10.save()
 
 # cover representation (old)
-sq9 = sqcover(0.81, 9) # create a cover of a square
+sq9 = Shape('square', 0.81, 9) # create a cover of a square
 cvplot(sq9) # plot the cover of a square
 len(sq9) # the number of patches
 cvplot(IterateN(vCat,sq,10,2)) # iterate Cat map with parameter 2, 10 times.
