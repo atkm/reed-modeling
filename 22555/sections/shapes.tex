@@ -66,28 +66,29 @@ is one.
 Therefore, the parametrized Arnold's map is area-preserving.
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.6\textwidth]{square049_400}
+  \includegraphics[width=0.6\textwidth]{square_049_900}
   \caption{A square $A = 0.49$ (i.e. the length of each edge is 0.7). Each square consists of patches. This square, for instance, consists of 400 patches, each represented with different colors.}
   \label{fig:square}
 \end{figure}
 The cat map stretches and folds the domain, and as a result, it produces thin strips.
 The parameter $k$ determines the thickness of the strips.
-The higher the value of $k$, the thinner the strips are~\ref{fig:catmap_demo}.
+The higher the value of $k$, the thinner the strips are (Fig.~\ref{fig:catmap_demo1}).
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.4\textwidth]{catmap_05}
+  \includegraphics[width=0.4\textwidth]{catmap_1-5}
   \hspace{2cm}
   \includegraphics[width=0.4\textwidth]{catmap_3}
-  \caption{Cat Map. left: $k=0.5$; right: $k = 3$. After one iteration. 
-    Colors of the patches correspond to those in~\ref{fig:square}.
-    The one with greater $k$ splits the square region into thinner strips.
+  \caption{Cat Map. left: $k=1.5$; right: $k = 3$. After one iteration. 
+    Colors of the patches correspond to those in (Fig.~\ref{fig:square}).
+    The one with greater $k$ tends to stretch the square to the $x$-direction, and splits the square region into thinner strips.
   }
   \label{fig:catmap_demo1}
 \end{figure}
 
 Although, $k$ can be any real number, parameters $k_0$ and its negative $-k_0$ result in effectively the same transformation, since the mapped images would be symmetric about the origin, and we take modulus 1 of the points.
 Thus, we can only use $k \in \mathbb{R}^+$ without losing shapes in the solution space.
-Furthermore, we will use $k \leq 10$, because, in a simulation using a limited precision, $k\geq 10$ does not give rise to appreciably different shapes~\ref{fig:catmap_demo2}.
+Also, the cat map would tend to stretch the unit square to the $x$-direction for greater $k$.
+We will use $k \leq 10$, because, in a simulation using a limited precision, $k\geq 10$ does not give rise to appreciably different shapes (Fig.~\ref{fig:catmap_demo2}).
 
 \begin{figure}[t]
   \centering
@@ -95,28 +96,69 @@ Furthermore, we will use $k \leq 10$, because, in a simulation using a limited p
   \hspace{2cm}
   \includegraphics[width=0.4\textwidth]{catmap_30}
   \caption{Cat Map. left: $k=10$; right: $k = 30$. After one iteration. 
-    Although the two images are not exactly the same, the differences seem not to be significant.
+    Although the two images are not exactly the same, the differences seem not to be significant from a qualitative point of view.
   }
   \label{fig:catmap_demo2}
 \end{figure}
 
 \subsection{The Kick Map}
-The other area-preserving chaotic map that we employ, the \textit{kick map}, is usually called the Chirikov's Standard Map. \citep{ott}.
+The other area-preserving chaotic map that we employ, the \textit{kick map}, is usually called the Chirikov's Standard Map \citep{ott}.
+Qualitatively, the kick map \textit{swirls} a shape, a complementary action of the cat map, which stretches a shape into thin strips.
+The kick map is defined as:
 \begin{align*}
-  y \mapsto y + k \sin x \mbox{ (mod $2\pi$)}
-  x \mapsto x + y \mbox{ (mod $2\pi$)},
+  y &\mapsto y + k \sin x \mbox{ (mod $2\pi$)} \\
+  x &\mapsto x + y \mbox{ (mod $2\pi$)},
 \end{align*}
 where updates of $y$ and $x$ are done asyncronously ($y$ first).
-While we would like to apply the kick map to the unit square, the kick map is a function from $[0,2\pi] \times [0,2\pi]$ to the same region.
+The effects of the cat map is stronger for higher value of $k$ (Fig.~\ref{fig:kickmap_demo1}).
+%
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.4\textwidth]{kickmap_10}
+  \hspace{2cm}
+  \includegraphics[width=0.4\textwidth]{kickmap_30}
+  \caption{The kick map. left: $k=10$; right: $k = 30$. After one iteration. 
+    Although the two images are not exactly the same, the differences seem not to be significant.
+  }
+  \label{fig:kickmap_demo1}
+\end{figure}
+%
+As $k$ approaches $1$, the kick map becomes more and more chaotic.
+It is known that the chaotic border is 0.971635... \citep{spedia}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.4\textwidth]{kickmap_2pi}
+  \hspace{2cm}
+  \includegraphics[width=0.4\textwidth]{kickmap_3pi}
+  \caption{The kick map. left: $k=10$; right: $k = 30$. After one iteration. 
+    Although the two images are not exactly the same, the differences seem not to be significant.
+  }
+  \label{fig:kickmap_demo2}
+\end{figure}
+
+Although we would like to apply the kick map to the unit square, the original kick map is a function from $[0,2\pi] \times [0,2\pi]$ to the same region.
 We use the following version of the kick map whose domain and image are the unit square:
 \begin{align*}
-  y \mapsto \pi + 2\pi y + k \sin (2\pi x) \mbox{ (mod $2\pi$)}
-  x \mapsto 2\pi (x + y) \mbox{ (mod $2\pi$)}.
+  y &\mapsto \frac{\pi + 2\pi y + k \sin (2\pi x)}{2\pi} \mbox{ (mod 1)}\\
+  x &\mapsto \frac{2\pi (x + y)}{2\pi} \mbox{ (mod 1)}.
 \end{align*}
-In plain words, the coordinates of each point in the unit square is scaled by $2\pi$ prior to the application of the original kick map.
+In plain words, the coordinates of each point in the unit square is scaled by $2\pi$ prior to the application of the original kick map, then scale the result by $1/2\pi$.
+Taking into account of the chaotic border ($k\approx 1$ in the original kick map), we take the range of $k$ to be $(0,2\pi)$.
+
+\subsection{Generation of Random Shapes}
+Iterate the unit square (Fig.~\ref{fig:square}) $0 \leq k \leq 10$ and $0 \leq k \leq 2\pi$
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.4\textwidth]{chaotic_shape}
+  \caption{Another example of a square of area 0.64 after 128 random iterations of the cat map and kick map.
+  Most of time, random iterations will create a disorderly figure.
+  }
+  \label{fig:chaotic}
+\end{figure}
 
 \subsection{Computing the Boundary}
-As we saw in the previous sections, a shape generated by chaotic maps applied to a square is not necessarily a single piece.
+As we saw in the previous sections, a shape generated by chaotic maps applied to a square is not necessarily a single piece (Fig.~\ref{fig:chaotic}).
 We require a 
 
 \end{document}
