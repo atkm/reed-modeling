@@ -4,6 +4,7 @@ import scipy.fftpack
 import matplotlib.pylab as plt
 import matplotlib.cm as colormap
 import matplotlib.patches as patch
+import random
 
 
 # pylab.plot(xaxis, graph) to plot
@@ -128,6 +129,26 @@ def IterateN(g, init, N, param):
         result = g(result,param)
 
     # Return a numpy array
+    return result
+
+# IterRand: Do one iteration of Cat or Kick map
+def IterRand(init):
+    rnum = random.randint(0,2) # generate 0 or 1
+    if rnum==1:
+        g = vCat
+        param = 5*random.random() # generate a parameter between 0 and 5
+    else:
+        g = vKick
+        param = random.random() # generate a parameter between 0 and 1
+
+    return g(result,param)
+
+
+# IterRandN: Randomly iterate N times
+def IterRandN(init, N):
+    result = init
+    for i in range(N):
+        result = IterRand(result)
     return result
 
 
