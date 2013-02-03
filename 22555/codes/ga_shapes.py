@@ -33,6 +33,13 @@ class BasicShape:
         self.wall = self.make_wall(self.pts, edge, height, wall_func)
 
 
+    # xyzxyz: return a 2-tuple of the xyz coords of the bottom points and those for the top.
+    def xyzxyz(self):
+        top = self.wall
+        bottom = sp.vstack((sp.transpose(self.pts), sp.zeros(self.resolution)))
+        bottom = sp.transpose(bottom)
+        return top, bottom
+
     # sqshape == a representation of square by boundary points
     # Create a square of area A with n points on one edge
     # (0,0) is the bottom left corner
@@ -92,11 +99,12 @@ class BasicShape:
         fig = plt.figure()
         space = axs.Axes3D(fig)
         # plot the wall 
-        xyz = sp.transpose(self.wall)
-        space.scatter(xyz[0],xyz[1],xyz[2])
+        points = self.xyzxyz()
+        top = sp.transpose(points[0])
+        space.scatter(top[0],top[1],top[2])
         # plot the pan bottom
-        xyz = sp.vstack((sp.transpose(self.pts), sp.zeros(self.resolution)))
-        space.scatter(xyz[0],xyz[1],xyz[2])
+        bottom = sp.transpose(points[1])
+        space.scatter(bottom[0],bottom[1],bottom[2])
         plt.show()
 
 
