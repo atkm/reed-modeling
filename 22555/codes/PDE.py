@@ -141,12 +141,25 @@ def heating_up_gen(m,n,l,pan_points,tf, c1, c2,w, Ti, Tb, delta_t, outputfile):
     # indentify interior points from pan_points:
     zmax = max([p[2] for p in pan_points])
     xys = pan_points[:,:2]
-    xyz = unique_rows(xys) 
-    interior_points = []
+    xyz = unique(xys) 
+    pre_interior_points = sp.zeros(3*len(pan_points)*(zmax-1)/2.).reshape(-1,3)
+    M = 0
     for h in range(1, zmax):
       for dub in xyz:
-        trip = (dub[0], dub[1], h)
-        interior_points.append(trip)
+        slice = sp.array([[dub[0], dub[1], h]])
+        pre_interior_points[M,:] = slice
+        M+=1
+    interior_points = []
+    N = 0
+    for slice1 in pre_interior_points:
+        Q = 0
+        for slice2 in pan_points:
+          if slice1 == slice2:
+              Q = 1
+        if Q == 0:
+           pan_points[N,:] = slice1
+           N+=1        
+    interior_points = multidim_intersect(pre_interior_points, pan_points)    
     # define conduction constants
     for p in pan_points:
       Cons[p] = c1
@@ -231,6 +244,16 @@ def heating_up3(m,n,l, tf, c1, c2,w, Ti, Tb,delta_t, outputfile):
     output.close()
     return S2
 
-def unique_rows(a):
-    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
-    return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
+def unique(a):
+    order = np.lexsort(a.T)
+    a = a[order]
+    diff = np.diff(a, axis=0)
+    ui = np.ones(len(a), 'bool')
+    ui[1:] = (diff != 0).any(axis=1) 
+    return a[ui]
+
+def multidim_setdiff(arr1, arr2):
+    arr1_view = arr1.view([('',arr1.dtype)]*arr1.shape[1])
+    arr2_view = arr2.view([('',arr2.dtype)]*arr2.shape[1])
+    set_difference = numpy.setdiff1d(arr1_view, arr2_view)
+    return set_difference.view(arr1.dtype).reshape(-1, arr1.shape[1])
