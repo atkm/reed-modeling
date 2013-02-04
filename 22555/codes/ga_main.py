@@ -16,13 +16,22 @@ def init_poplulation(A, n, N):
 
 # eval_fit: evalutate fitness of each individual
 # vectorized version of fit_func
-# w is the weight on the importance of 
 def eval_fit(population, w):
-    return [fit_func(p) for p in population]
+    return [fit_func(p, w) for p in population]
 
-def fit_func():
-    pass
+# fit_func: the fitness function
+# w is the weight on heat distribution. Hence the weight on effective area is w.
+def fit_func(shape, w):
+    return w * fit_heat(shape) + (1 - w) * fit_pack(shape) 
 
+# fit_heat
+# start a diffusion equation simulation to compute 
+def fit_heat(shape):
+    return 0
+
+# fit_pack: returns the pack fitness (0 <= fit <= 1) 
+def fit_pack(shape, A):
+    return A/eff_area(shape)
 
 # eff_area: Compute the effective area.
 def eff_area(shape):
