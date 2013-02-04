@@ -77,13 +77,18 @@
 \section{Abstract}
 We attempt to implement a model that employs Arnold's cat map to chaotically generate batches of equal-area boundaries in $\mathbb{Z}^2$, which are linearly extended into three dimensional `pans'.  Pans are evaluated using the finite difference method, then culled and recombined by a genetic algorithm in the hope of producing an optimal population.  An analytic solution to the rectangular problem is also explored.
 \section{Introduction}
-\subsection{Aims}
-This paper concerns the modeling and optimization of brownie baking with respect to corner burning in a standard rectangular oven. We attempt to model the best brownie pan for
+\subsection{Background}
+This paper is concerned with modeling and optimization of brownie baking in a standard rectangular oven. Specifically, our model attempts to:
+\subsection{Goals}
 \begin{itemize}
-\item Reduction of overcooking around the edges of the pan
-\item Efficient packing in a rectangular oven
-\item A combination of the above 
+  \item Determine the optimal wall shape in terms of the distribution of heat.
+  \item Determine the optimal thermal conductivity of the pan in terms of the distribution of heat.
+  \item Determine the optimal base shape in terms of the distribution of heat.
+  \item Determine the optimal base shape in terms of the number of pans that can fit in the oven.
 \end{itemize}
+
+The paper is structures as follows.
+First, we discuss the overall picture of our in the next subsection.
 
 \subsection{Approach}
 \begin{enumerate}
@@ -94,11 +99,17 @@ This paper concerns the modeling and optimization of brownie baking with respect
 \begin{equation*}
   \frac{du}{dt} = K \nabla^2 u = K (\frac{du^2}{dx^2} + \frac{du^2}{dy^2} + \frac{du^2}{dz^2})
 \end{equation*}
-We proceed by means of a genetic algorithm (GA), an optimization heuristic that mimics the process of natural evolution.
-We define the \emph{fitness} of a pan to be the extent to which it achieves the aims enumerated above.  We will attempt to use the Arnold cat map and Chirikov's Standard Map to stochastically generate batches of random, chaotic `pans', each generation of which will be selected for fitness and recombined to form the next batch. 
+We proceed by means of a genetic algorithm (GA), which is an optimization heuristic that mimics the process of natural evolution.
+We define the \emph{fitness} of a pan to be how close its design is to achieving a set of aims enumerated above.
+In each loop or \emph{generation}, the fitness of the individual pans is evaluated.
+The more fit pans are then stochastically selected and recombined to form a new pan, which is used in the next iteration of the algorithm. 
 Implementations of GA and their limitations are discussed in \citet{mitchell}.
 
-We attempt, and fail, to use the heat equation to solve the rectangular problem, for reasons that are discussed.
+Note that we use the classical equation for heat $u$ to model the spread of temperature:
+where $K$ is a conductivity constant. The next section presents the explicit details of how our model operates.
+It should include a restatement of the problem, the history and context of the problem, and your work and results.
+Mention the traditional methods that are used to solve the particular kind of problems.
+%
 \begin{figure}[t]
   \centering
   \includegraphics[width=1.0\textwidth]{fitness_flowchart}
