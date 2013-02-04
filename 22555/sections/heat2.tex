@@ -135,5 +135,58 @@ Then
 and by fourier series,
 \[d_n = \frac{2}{H} \int_0^H \delta(r) e^{-\rho_l z} dz = \frac{2}{H} \int_0^H \gamma(r) e^{\rho_l z} dz\]
 
+\item[2] We used the method of finite differences to model the diffusion of heat through the batter and pan.  We started by building a two dimensional model for a vertical cross section of a rectangular pan.  Let $U^t$ and $C$ be arrays of dimension $M \times N$.  Let $c_a$,$c_p$ and $c_b$ be the thermal conductivity constants of air, the pan material, and brownie batter.  Let $T_i$ and $T_b$ stand for initial batter temperature and baking temperature, let $\delta s = \frac{1}{N}$, and let $w$ be the thickness of the pan material in units.\\
+\\
+From a schematic perspective, $U^t_{i,j}$ will hold the temperature of point $(i,j)$ at time $t$ and $C_{i,j}$ will hold the corresponding thermal conductivity constant.  For an illustrative example of initial conditions, consider the $6 \times 6$ case with $w = 1$:
+\[U^0 = \begin{pmatrix} T_b&T_b&T_b&T_b&T_b&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_b&T_b&T_b&T_b&T_b \end{pmatrix} \hspace{20mm}
+  C = \begin{pmatrix} c_a&c_a&c_a&c_a&c_a&c_a\\
+				   c_a &c_p &c_b&c_b&c_p&c_a\\
+				    c_a &c_p &c_b&c_b&c_p&c_a\\
+  				 c_a &c_p &c_b&c_b&c_p&c_a\\
+				 c_a &c_p &c_p&c_p&c_p&c_a\\
+				c_a&c_a&c_a&c_a&c_a&c_a \end{pmatrix} \]		
+To track the evolution of $U$ through time, we define the following partial derivatives for points $(i,j,k)$, with time-coordinate $q$: \begin{align*}
+u_t &\approx \dfrac{u_{i,j}^{q+1} - u_{i,j}^q}{\Delta t}\\
+u_{xx} &\approx \dfrac{u_{i+1,j}^q - 2u^q{i,j} + u_{i-1,j}^q}{(\Delta s)^2}\\
+u_{yy} &\approx \dfrac{u_{i,j+1}^q - 2u_{i,j}^q + u_{i,j-1}^q}{(\Delta s)^2} \end{align*}
+Given these, the heat equation
+\[u_t = c (u_{xx} + u_{yy})\]
+becomes
+\[\dfrac{u_{i,j}^{q+1} - u_{i,j}^q}{\Delta t} = c  \left(\dfrac{u_{i+1,j}^q - 2u_{i,j}^q + u_{i-1,j}^q}{(\Delta s)^2} + \dfrac{u_{i,j+1}^q - 2u_{i,j}^q + u_{i,j-1}^q}{(\Delta s)^2}\right)\]
+from which we can derive
+\[u_{i,j}^{q+1} = u_{i,j}^q + c \cdot \frac{\Delta t}{(\Delta s)^2} \left(u_{i+1,j}^q + u_{i-1,j}^q - 4u_{i,j}^q + u_{i,j+1}^q + u_{i,j-1}^q \right)\]
+$\Delta t$, the length of a timestep, can be chosen arbitrarily but must obey the relation
+\[\Delta t \leq \frac{(\Delta s)^2}{2c}\]
+for $c = c_a,c_p,c_b$ for a stable solution.\\
+\\
+Using values $m = 8, n=8, T_b = 176, T_i = 26, \Delta t = 1/50000, c_a = .024$, and $c_b = .017$, , we varied the conduction coefficient for the pan to determine the best pan material for even heating around the edges.  We first compared glass ($c_p = 1.05$) to a much less conductive material ($c_p = 0.05$) and aluminum ($c_p = 215$) and reached the following states after 20000 timesteps:
+\[c_p = 0.05: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&115.87&63.98&63.98&115.87&176\\
+						176&93.66&38.64&38.64&93.66&176\\
+						176&95.14&42.41&42.41&95.14&176\\
+						176&122.43&95.38&95.38&122.43&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\] 
+\[c_p = 1.05: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&136.34&71.99&71.99&136.34&176\\
+						176&122.18&49.61&49.61&122.18&176\\
+						176&127.61&60.92&60.92&127.61&176\\
+						176&152.16&129.42&129.42&152.56&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\]
+\[c_p = 215: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&136.85&72.48&72.48&136.85&176\\
+						176&122.91&50.37&50.37&122.91&176\\
+						176&128.41&62.09&62.09&128.41&176\\
+						176&152.67&130.25&130.25&152.66&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\]
+Noting the corner values of $122.43, 152.16$, and $152.67$, we were struck by the lack of difference between glass and aluminum.  We repeated the test on glass and aluminum with $14 \times 14$ arrays, and reached the following states in the lower left corners after 50,000 timesteps:
+
+We concluded from this that, assuming a minimal level of conductivity (on par with glass), an increase in conductivity does little to increase or allay heat buildup around the edges of the pan.\\
+\\
+Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
 \end{enumerate}
 \end{document}

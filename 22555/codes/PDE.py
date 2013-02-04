@@ -158,10 +158,11 @@ def heating_up3(m,n,l, tf, c1, c2,w, Ti, Tb,delta_t):
                     S2[i,j,k] = u_next3(S1, i,j,k,Cons[i,j,k],delta_t, delta_s,m,n,l)
                     S2 = bindM3(S2, Tb)
                     S1 = S2.copy()
-        for i in range(l):
-            print S2[:,:,l-i]
-            print '\n'
-        print '\n\n'
+        if t%100==0:
+            for i in range(l):
+                print S2[:,:,l-i-1]
+                print t/tf
+                print '\n'
     print S2
 
 

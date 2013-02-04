@@ -184,13 +184,9 @@ Using values $m = 8, n=8, T_b = 176, T_i = 26, \Delta t = 1/50000, c_a = .024$, 
 						176&152.67&130.25&130.25&152.66&176\\
 					        176&176&176&176&176&176 \end{pmatrix}\]
 Noting the corner values of $122.43, 152.16$, and $152.67$, we were struck by the lack of difference between glass and aluminum.  We repeated the test on glass and aluminum with $14 \times 14$ arrays, and reached the following states in the lower left corners after 50,000 timesteps:
-\[c_p = 1.05 \begin{pmatrix} \vdots&\vdots&\vdots&\vdots&\ddots  We concluded from this that, assuming a minimal level of conductivity (on par with glass), an increase in conductivity does little to increase or allay heat buildup around the edges of the pan.\\
+
+We concluded from this that, assuming a minimal level of conductivity (on par with glass), an increase in conductivity does little to increase or allay heat buildup around the edges of the pan.\\
 \\
-Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives \begin{align*}
-u_t &\approx \dfrac{u_{i,j,k}^{k+1} - u_{i,j,k}^k}{\Delta t}\\
-u_{xx} &\approx \dfrac{u_{i+1,j,k}^k - 2u^k{i,j,k} + u_{i-1,j,k}^k}{(\Delta s)^2}\\
-u_{yy} &\approx \dfrac{u_{i,j+1}^k - 2u_{i,j}^k + u_{i,j-1}^k}{(\Delta s)^2}
-u_{zz} &\approx \dfrac{u_{i,j+1}^k - 2u_{i,j}^k + u_{i,j-1}^k}{(\Delta s)^2}
-\end{align*}
+Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
 \end{enumerate}
 \end{document}
