@@ -170,7 +170,6 @@ Later sections discuss the methods in more detail.
 \begin{itemize}
   \item $n\times m$: grid size
   \item $H$: pan's wall height
-  \item $\alpha$: pan's wall slope
   \item $A$: pan's area (Section~\ref{sec:shapes})
   \item $A_{eff}$: the effective area of a shape (Section~\ref{sec:shapes})
   \item $T_{oven}$: the oven's internal temperature
@@ -185,14 +184,14 @@ Later sections discuss the methods in more detail.
 
 \section{Genetic Algorithm}
 \label{sec:ga}
-As we mentioned in the introduction, genetic algorithms (GA) is a crucial piece of our solution.
+As we mentioned in the introduction, GA is a crucial piece of our solution.
 GA is used to explore an enormous solution space that is made possible by random shape generation by chaotic maps.
 Since we have already discussed the overall mechanism of our GA, in this section we define relevant mathematical terms.
 These are the three constants that we employ to describe the performance of a shape:
 \begin{enumerate}
-  \item $Fit_{total}$: the overall fitness of the shape of a pan (Section~\ref{sec:ga})
-  \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven (Section~\ref{sec:ga})
-  \item $Fit_{heat}$:  the fitness of the shape of a pan measured by reduction in edge overcooking and even heat distribution (Section~\ref{sec:ga})
+  \item $Fit_{total}$: the overall fitness of the shape of a pan 
+  \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven
+  \item $Fit_{heat}$:  the fitness of the shape of a pan measured by reduction in edge overcooking and even heat distribution 
 \end{enumerate}
 Our area estimation algorithm (see Section~\ref{sec:shapes}) computes $Fit_{pack}$, and simulation of the heat equation determines $Fit_{heat}$.
 $Fit_{total}$ is computed from $Fit_{pack}$ and $Fit_{heat}$ by
@@ -207,7 +206,7 @@ Thus, when $w$ is large, our GA tends to let shapes with better abilities to dis
 The area is fixed to $A$. To determine the optimal shape, we use $A=1$. The effects of varying $A$ are explored separately.
 
 \subsection{Mutation, Area-Preserving Map, and Chaos}
-In our GA, mutation serves to introduce new kinds of potential brownie pan base shapes, which are then marked for success or failure by the culinary process of evolution.
+In our GA, mutation serves to introduce new kinds of potential base shapes, which are then marked for success or failure by the culinary process of evolution.
 We consider mutation as a transformation of a two-dimensional region.
 Since pans must be comparable in aptness of packing, we need to mutate shapes in a a way that preserves area.\\
 An area-preserving map is a measure-preserving map in a two-dimensional sense, i.e. $m(L^{-1}) = m(L)$, where $m$ is the Lebesgue measure.
@@ -226,10 +225,10 @@ Although this characteristic is suitable as a way of introducing slight modifica
 This observation motivates us to employ chaotic maps instead.
 We can think of chaotic maps as having a higher mutation rate than non-chaotic maps.
 These transformations are deterministic, yet highly unpredictable.
-Repeating the application of the chaotic maps a random number of times is, in effect, the very similar to producing random shapes of a fixed area. 
+Repeating the application of the chaotic maps a random number of times is, in effect, very similar to producing random shapes of a fixed area. 
 Our process of generating random shapes is similar to a process that generates pseudo-random numbers.
 Hence, we can use chaotic maps as a way of creating a random shape, which would correspond to generating a random rational number in a usual GA.
-Mutations of shapes by area-preserving chaotic maps allow our GA to explore the solution space that would not be easily accessible otherwise.
+Area-preserving chaotic maps, which mutate shapes in such a drastical manner, which mutate shapes in such a drastical manner,, allow our GA to explore the solution space that would not be easily accessible otherwise.
 In particular, we employ two chaotic maps: the \textbf{cat map} and \textbf{kick map}.
 
 \subsection{The Cat Map}
@@ -344,7 +343,7 @@ In plain words, the coordinates of each point in the unit square are scaled by $
 Taking into account of the chaotic border ($k\approx 1$ in the original kick map), we take the range of $k$ to be $(0,2\pi)$.
 
 \subsection{Generation of Random Shapes}
-To generate random shapes, we repeatedly apply the chaotic maps to the unit square (Fig.~\ref{fig:square}) $0 \leq k \leq 10$ and $0 \leq k \leq 2\pi$.
+To generate random shapes, we repeatedly apply the chaotic maps to the unit square (Fig.~\ref{fig:square}) with parameters $0 \leq k \leq 10$ and $0 \leq k \leq 2\pi$ for the cat map and kick map, respectively.
 In many cases, random iterations result in a chaotic shape that is apparently not suitable as a shape for the pan. 
 However, the process may arrive at orderly shapes such as those in Fig.~\ref{fig:order}.
 \begin{figure}[h!]
@@ -404,7 +403,7 @@ Fig.~\ref{fig:effarea} shows how a shape with empty areas in between can have an
   \label{fig:effarea}
 \end{figure}
 %
-To approximate the effective area of $A_{eff}$, we do the following:
+To approximate the effective area of $A_{eff}$, we use the following algorithm:
 \begin{enumerate}
   \item Compute the center of mass, which equals to the mean coordinates of all points.
   \item Consider four quadrants around the mean point.
