@@ -2,12 +2,12 @@
 % Make sure 'reedmcm.cls' and 'mcm.sty' are in the directory that you're running latex from.
 % These are meant to be used with pdflatex.
 % Note: natbib for bibliography.
-\documentclass[12pt]{reedmcm}
+\documentclass[12pt,draft]{reedmcm}
 \usepackage{mcm}
 \graphicspath{{./images/}}
 
 %Title
-\title{\textbf{The Best Brownie Ever: Finite Difference Method, Chaotic Maps, and Genetic Algorithms}}
+\title{\textbf{The Best Brownie Ever: Finite Difference, Chaotic Maps, and Genetic Algorithms}}
 \team{22555} % Put your team control number here. No actual names!
 \contest{MCM}
 \question{A} % Problem A or B?
@@ -59,14 +59,16 @@
 %    weak."
 
 \begin{summary}
-  Genetic algorithm determines the shape that is most suitable for even heat distribution.
+  We explore the optimal shape for baking brownies by a genetic algorithm.
+  Two chaotic area-preserving maps, Arnold's Cat map and Chirikov Standard map, play a crucial role in our genetic algorithm.
+  We use the chaotic transformations to produce various shapes in an almost random manner, a process analogous to generating pseudo-random numbers.
+  Furthermore, since the particular chaotic transformations are area-preserving, generated shapes, no matter how different they may apprear, have the same area.
+  As a result, we have an effective method for sampling many different shapes, including ones that one cannot easily generate in straightforward methods.
   The heat distribution on the pan and brownie is computed by the diffusion equation.
-  We solve the diffusion equation numerically in SciPy using the finite-difference method.
-  We also solve the diffusion equation analytically for a special case to verify our numerical solution.
-  Chaotic transformations, Arnold's Cat map and Chirikov Standard map, produces random shapes.
-  Varying thermal conductivity of the pan between 1.05 and 200.
-
-  \end{summary}
+  We solve the diffusion equation numerically in SciPy using the finite difference method.
+  The model reproduces the build-up of heat at the corners of a pan.
+  (results and conclusions. . . Definitely write down some numbers) Varying thermal conductivity of the pan between 1.05 and 200 showed.
+\end{summary}
   % End of Summary
 
 % After the Summary, the actual solution starts.
@@ -76,20 +78,21 @@
 % \listoftables  
 
 \section{Introduction}
-\subsection{Background}
-This paper is concerned with modeling and optimization of brownie baking in a standard rectangular oven. Specifically, our model attempts to:
-\subsection{Goals}
+This paper is concerned with modeling and optimization of brownie baking in a standard rectangular oven.
+Pans that are commonly used for baking are rectangular; however, rectangle is not an ideal shape when considering the distribution of heat.
+
+Specifically, our model attempts to:
 \begin{itemize}
-  \item Determine the optimal wall shape in terms of the distribution of heat.
-  \item Determine the optimal thermal conductivity of the pan in terms of the distribution of heat.
-  \item Determine the optimal base shape in terms of the distribution of heat.
-  \item Determine the optimal base shape in terms of the number of pans that can fit in the oven.
+  \item Determine the optimal base shape with regard to the distribution of heat.
+  \item Determine the optimal wall shape with regard to the distribution of heat.
+  \item Determine the optimal thermal conductivity of the pan with regard to the distribution of heat.
+  \item Determine the optimal base shape with regard to the number of pans that can fit in the oven.
 \end{itemize}
 
 The paper is structures as follows.
 First, we discuss the overall picture of our in the next subsection.
 
-\subsection{Approach}
+\subsection{Our Approach}
 \begin{enumerate}
   \item Genetic Algorithm (GA)
   \item Numerically Solving the Dissipation Equation using the Finite Difference Method
@@ -134,8 +137,8 @@ Mention the traditional methods that are used to solve the particular kind of pr
   \item $n\times m$: grid size
   \item $H$: pan's wall height
   \item $\alpha$: pan's wall slope
-  \item $A$: pan's area (Section~\ref{sec:shape})
-  \item $A_{eff}$: the effective area of a shape (Section~\ref{sec:shape})
+  \item $A$: pan's area (Section~\ref{sec:shapes})
+  \item $A_{eff}$: the effective area of a shape (Section~\ref{sec:shapes})
   \item $T_{oven}$: the oven's internal temperature
   \item $T_{room}$: the room temparature
   \item $Fit_{total}$: the overall fitness of the shape of a pan (Section~\ref{sec:ga})
@@ -165,7 +168,7 @@ These are the three constants that we employ to describe the performance of a sh
   \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven (Section~\ref{sec:ga})
   \item $Fit_{heat}$: the fitness of the shape of a pan measured by how evenly heat is distributed over the pan (Section~\ref{sec:ga})
 \end{enumerate}
-Our area estimation algorithm (see Section~\ref{sec:shape}) computes $Fit_{pack}$, and simulation of the heat equation determines $Fit_{heat}$.
+Our area estimation algorithm (see Section~\ref{sec:shapes}) computes $Fit_{pack}$, and simulation of the heat equation determines $Fit_{heat}$.
 $Fit_{total}$ is computed from $Fit_{pack}$ and $Fit_{heat}$ by
 \begin{equation*}
   Fit_{total} = w \cdot Fit_{heat} + (1-w) \cdot Fit_{pack},
@@ -197,6 +200,9 @@ as a linear map corresponds to the rotation by $\theta$.
 Although this characteristic is suitable as a way of introducing slight modifications to a pre-existing shape, applications of such maps would not create an entirely new shape.
 This observation motivates us to employ chaotic maps instead.
 We can think of chaotic maps as having a higher mutation rate than non-chaotic maps.
+These transformations are deterministic, yet highly unpredictable.
+Repeating the application of the chaotic maps a random number of times is, in effect, the very similar to producing random shapes of a fixed area. 
+Our process of generating random shapes is similar to a process that generates qseudo-random numbers.
 Hence, we can use chaotic maps as a way of creating a random shape, which would correspond to generating a random rational number in a usual GA.
 Mutations of shapes by area-preserving chaotic maps allow our GA to explore the solution space that would not be easily accessible otherwise.
 In particular, we employ two chaotic maps: the \textbf{cat map} and \textbf{kick map}.
