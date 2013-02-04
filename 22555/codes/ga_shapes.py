@@ -267,6 +267,10 @@ def cvplot_nosave(shape):
         plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
         subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
         plt.gca().add_patch(subsq)
+    plt.xlim([0,1])
+    plt.ylim([0,1])
+    plt.show()
+
 
 # animation in interactive version
 # NOT WORKING
