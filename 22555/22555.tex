@@ -73,8 +73,9 @@
   Our method has the possibility to find an entirely new shape that outperforms conventional shapes in both heat distribution and spatial efficiency.
 
   % the heat equation model
-  The heat distribution on the pan and brownie is computed by the diffusion equation.
+  The heat distribution on the pan and brownie is computed using the diffusion equation.
   We solve the diffusion equation numerically in SciPy using the finite difference method.
+  An analytic solution to the rectangular problem is also explored.
   Parameters of the model were calibrated to reproduce the build-up of heat at the corners of a pan.
 
   % results and conclusions. . . Definitely write down some numbers
@@ -87,12 +88,18 @@
 \tableofcontents
 \listoffigures
 % \listoftables  
-\section{Abstract}
+
+\section{Abstract} % Isn't this section redundant since we already have the summary sheet? Can we move it to the end of the intro?
 We attempt to implement a model that employs Arnold's cat map to chaotically generate batches of equal-area boundaries in $\mathbb{Z}^2$, which are linearly extended into three dimensional `pans'.  Pans are evaluated using the finite difference method, then culled and recombined by a genetic algorithm in the hope of producing an optimal population.  An analytic solution to the rectangular problem is also explored.
+
 \section{Introduction}
 This paper is concerned with modeling and optimization of brownie baking in a standard rectangular oven.
 Pans that are commonly used for baking are rectangular; however, rectangle is not an ideal shape when considering the distribution of heat.
-
+Heat tends to build up around the four corner, and the brownie would not be cooked evenly.
+To resolve this issue, one may use a circular pan instead.
+This shape, however, has limitations, as well.
+Since ovens are usually rectangular, circular pans cannot fill the space efficiently, and the amount of goods that can be baked at the same time is reduced by approximately 75\%.
+Our goal is to find a pan shape that excel in both heat distribution and spatial efficiency.
 Specifically, our model attempts to:
 \begin{itemize}
   \item Determine the optimal base shape with regard to the distribution of heat.
@@ -100,29 +107,36 @@ Specifically, our model attempts to:
   \item Determine the optimal thermal conductivity of the pan with regard to the distribution of heat.
   \item Determine the optimal base shape with regard to the number of pans that can fit in the oven.
 \end{itemize}
+We attempt to implement a model that employs chaotic transformations to generate batches of equal-area base shapes in $\mathbb{Z}^2$, which are linearly extended into three dimensional `pans'.
+Pans are evaluated using numerical solutions of the heat equatiion by the finite difference method, then culled and recombined by a genetic algorithm in the hope of producing an optimal population. 
+An analytic solution to the rectangular problem is also explored.
 
 The paper is structures as follows.
-First, we discuss the overall picture of our in the next subsection.
+First, we discuss the overall picture of our method in the next subsection.
+Next, we present assumptions and their justifications, variables, and constants that are incorporated in our model.
+Then, we provide backgrounds of the methods used to implement the model.
+Finally, we analyze the model and the data obtained from it.
 
-\subsection{Our Approach}
+\section{Our Approach: Genetic Algorithm}
+Our model employs the following three methods:
 \begin{enumerate}
   \item Genetic Algorithm (GA)
   \item Numerically Solving the Dissipation Equation using the Finite Difference Method
-  \item Generation of Random Shapes by Area-Preserving Chaotic Maps
+  \item Generation of Random Shapes by Area-Preserving Chaotic Maps.
 \end{enumerate}
-\begin{equation*}
-  \frac{du}{dt} = K \nabla^2 u = K (\frac{du^2}{dx^2} + \frac{du^2}{dy^2} + \frac{du^2}{dz^2})
-\end{equation*}
-We proceed by means of a genetic algorithm (GA), which is an optimization heuristic that mimics the process of natural evolution.
-We define the \emph{fitness} of a pan to be how close its design is to achieving a set of aims enumerated above.
-In each loop or \emph{generation}, the fitness of the individual pans is evaluated.
-The more fit pans are then stochastically selected and recombined to form a new pan, which is used in the next iteration of the algorithm. 
-Implementations of GA and their limitations are discussed in \citet{mitchell}.
+In this section, we discuss GA, the core of our approach, in some detail, and the other two briefly.
+The other two are discussed more extensively in later sections. 
 
-Note that we use the classical equation for heat $u$ to model the spread of temperature:
-where $K$ is a conductivity constant. The next section presents the explicit details of how our model operates.
-It should include a restatement of the problem, the history and context of the problem, and your work and results.
-Mention the traditional methods that are used to solve the particular kind of problems.
+GA is an optimization heuristic that mimics the process of natural evolution (Fig~\ref{fig:gaflow}).
+GA assigns each pan a \textit{fitness} value based on how close its design is to achieving a set of aims enumerated above (Fig~\ref{fig:fitnessflow}).
+%
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.5\textwidth]{ga_flowchart}
+  \caption{A flow chart of the genetic algorithm.}
+  \label{fig:gaflow}
+\end{figure}
+%
 %
 \begin{figure}[t]
   \centering
@@ -130,6 +144,26 @@ Mention the traditional methods that are used to solve the particular kind of pr
   \caption{A flow chart of the generation of shape to the fitness evaluation of a shape.}
   \label{fig:fitnessflow}
 \end{figure}
+%
+The more fit pans are more likely to survive and recombined to form a new pan, which is used in the next iteration of the algorithm. 
+After many iterations, we would obtain shapes that satisfy our requirements.
+GA is especially suited for searching through a large solution space, which may be computationally infeasible for global optimization algorithms.
+This is exactly the case for our problem, since there are practically infinite number of shapes that we can adopt.
+Consider the following process that produces a polygon of area $A$:
+\begin{enumerate}
+  \item Pick a random integer $N \geq 3$.
+  \item Pick $N$ points on $\mathbb{R}^2$.
+  \item Take the polygon formed by the $N$ points as our shape.
+  \item Compute the area of the polygon, and scale it so that the area would become $A$.
+\end{enumerate}
+This process alone produces an enormous number of different shapes.
+Also, it is possible that an optimal pan shape is curvilinear, such as S- or spiral-shaped.
+Since GA has the potential to search through a vast solution space, the method allows us to explore shapes that would not be considered in algorithms that require the search space to be reasonably-sized.
+Implementations of GA and their benefits as well as limitations are discussed in \citet{mitchell}.
+
+The other major components of our model are area-preserving chaotic maps, and numerical solutions of the diffusion equation.
+In short, area-preserving chaotic maps and numerical solutions to the diffusion equation provides our GA means of supplying random shapes and evaluating the fitness of shapes, respectively (Fig~\ref{fig:fitnessflow}).
+Later sections discuss the methods in more detail.
 
 \section{The Model}
 \subsection{Assumptions and Justifications}
@@ -164,14 +198,6 @@ Mention the traditional methods that are used to solve the particular kind of pr
 As we mentioned in the introduction, genetic algorithms (GA) is a crucial piece of our solution.
 GA is used to explore an enormous solution space that is made possible by random shape generation by chaotic maps.
 Since we have already discussed the overall mechanism of our GA, in this section we define relevant mathematical terms.
-%
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.5\textwidth]{ga_flowchart}
-  \caption{A flow chart of the genetic algorithm.}
-  \label{fig:gaflow}
-\end{figure}
-%
 These are the three constants that we employ to describe the performance of a shape:
 \begin{enumerate}
   \item $Fit_{total}$: the overall fitness of the shape of a pan (Section~\ref{sec:ga})
