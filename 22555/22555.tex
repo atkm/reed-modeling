@@ -87,9 +87,12 @@ It should include a restatement of the problem, the history and context of the p
 Mention the traditional methods that are used to solve the particular kind of problems.
 
 \subsection{Approach}
-\begin{center}
-%\includegraphics[scale=.4]{flowchart}
-\end{center}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1.0\textwidth]{fitness_flowchart}
+  \caption{A flow chart of the generation of shape to the fitness evaluation of a shape.}
+  \label{fig:fitnessflow}
+\end{figure}
 
 \section{The Model}
 \subsection{Assumptions and Justifications}
@@ -99,7 +102,7 @@ Mention the traditional methods that are used to solve the particular kind of pr
    Our model is agnostic about the size or shape of the model.
 
   \item We test a pan one at a time. 
-    Even in the case where more than one pans is placed in the oven, our model is valid as long as the surface of each pan is kept at a constant temperature.
+  Even in the case where more than one pans is placed in the oven, our model is valid as long as the surface of each pan is kept at a constant temperature.
 
   \item We assume that pan's walls are flat surfaces. While it is possible to consider walls that are curvilinear, we will assume this for the simplicity of the model.
 \end{itemize}
@@ -109,40 +112,61 @@ Mention the traditional methods that are used to solve the particular kind of pr
   \item $n\times m$: grid size
   \item $H$: pan's wall height
   \item $\alpha$: pan's wall slope
-  \item $A$: pan's area
+  \item $A$: pan's area (Section~\ref{sec:shape})
+  \item $A_{eff}$: the effective area of a shape (Section~\ref{sec:shape})
   \item $T_{oven}$: the oven's internal temperature
   \item $T_{room}$: the room temparature
-  \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven
-  \item $Fit_{heat}$: the fitness of the shape of a pan measured by how evenly heat is distributed over the pan
+  \item $Fit_{total}$: the overall fitness of the shape of a pan (Section~\ref{sec:ga})
+  \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven (Section~\ref{sec:ga})
+  \item $Fit_{heat}$: the fitness of the shape of a pan measured by how evenly heat is distributed over the pan (Section~\ref{sec:ga})
   \item $K_{pan}$: the conductivity constant of the pan
   \item $K_{br}$: the conductivity constant of the brownie
 \end{itemize}
 
-\subsection{Goal}
+\subsection{Goals}
 \begin{itemize}
   \item Determine the optimal wall shape in terms of the distribution of heat.
+  \item Determine the optimal thermal conductivity of the pan in terms of the distribution of heat.
   \item Determine the optimal base shape in terms of the distribution of heat.
   \item Determine the optimal base shape in terms of the number of pans that can fit in the oven.
 \end{itemize}
 
-\section{The Baking Simulation}
-\subsection{The Diffusion Equation}
-\subsection{Parameter Fitting}
-
-
 \section{Genetic Algorithm}
-\subsection{Balancing The Two}
+\label{sec:ga}
+As we mentioned in the introduction, genetic algorithms (GA) is a crucial piece of our solution.
+GA is used to explore an enormous solution space that is made possible by random shape generation by chaotic maps, which we discuss in the next section.
+Since we have already discussed the overall mechanism of our GA, in this section we define relevant mathematical terms.
+%
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.5\textwidth]{ga_flowchart}
+  \caption{A flow chart of the genetic algorithm.}
+  \label{fig:gaflow}
+\end{figure}
+%
+These are the three constants that we employ to describe the performance of a shape:
+\begin{enumerate}
+  \item $Fit_{total}$: the overall fitness of the shape of a pan (Section~\ref{sec:ga})
+  \item $Fit_{pack}$: the fitness of the shape of a pan measured by the number of the same shapes that can be packed in a oven (Section~\ref{sec:ga})
+  \item $Fit_{heat}$: the fitness of the shape of a pan measured by how evenly heat is distributed over the pan (Section~\ref{sec:ga})
+\end{enumerate}
+Our area estimation algorithm (see Section~\ref{sec:shape}) computes $Fit_{pack}$, and simulation of the heat equation determines $Fit_{heat}$.
+$Fit_{total}$ is computed from $Fit_{pack}$ and $Fit_{heat}$ by
+\begin{equation*}
+  Fit_{total} = w \cdot Fit_{heat} + (1-w) \cdot Fit_{pack},
+\end{equation*}
+where $w$ is the weight on the requirement of heat distribution, as the problem statement requires.
+Thus, when $w$ is large, our GA tends to let shapes with better abilities to distribute heat survive, regardless of their spacial efficiency.
 
 \section{Shapes}
-\subsection{Assumptions on Shapes}
-\begin{enumerate}
-  \item The area is fixed to $A$. To determine the optimal shape, we use $A=1$. The effects of varying $A$ is explored separately.
-\end{enumerate}
+\label{sec:shapes}
+The area is fixed to $A$. To determine the optimal shape, we use $A=1$. The effects of varying $A$ is explored separately.
 
 \subsection{Mutation, Area-Preserving Map, and Chaos}
 In GA, mutation serves as a means of introducing new kinds of shapes that are potentially successful.
+We consider mutation as a transformation of a two-dimensional area.
 Since our goal is to compare different shapes with fixed area, we need to mutate shapes in a way such that does not alter the area.
-Thus, mutation of shapes naturally require \textit{area-preserving map}.
+Thus, mutations of shapes has to be \textit{area-preserving maps}.
 Area-preserving map is a measure-preserving map in a two-dimensional sense, i.e. $m(L^{-1}) = m(L)$, where $m$ is the Lebesgue measure.
 For example, suppose $L$ is a linear transformation.
 If $\det(L) = 1$ then it is an area-preserving map; the class of such maps correspond to the special linear group $SP(2,R)$.
@@ -156,16 +180,16 @@ For example, the matrix
 \end{equation*}
 as a linear map corresponds to the rotation by $\theta$. 
 Although this characteristic is suitable as a way of introducing slight modifications to a pre-existing shape, applications of such maps would not create an entirely new shape.
-The observation motivates us to employ chaotic maps instead.
+This observation motivates us to employ chaotic maps instead.
 We can think of chaotic maps as having a higher mutation rate than non-chaotic maps.
 Hence, we can use chaotic maps as a way of creating a random shape, which would correspond to generating a random rational number in a usual GA.
-Mutations of shapes by area-preserving chaotic maps allow our GA to explore the solution space that would not be easily accessible by non-chaotic transformations.
+Mutations of shapes by area-preserving chaotic maps allow our GA to explore the solution space that would not be easily accessible otherwise.
 In particular, we employ two chaotic maps: the \textbf{cat map} and \textbf{kick map}.
 
 \subsection{The Cat Map}
-We use the cat map (commonly refered to as the "Arnold's Cat Map") to mutate shapes.
+One of the chaotic maps that we use to mutate shapes is the cat map (commonly refered to as the "Arnold's Cat Map").
 Arnold's cat map is a chaotic, area-preserving map on a two-dimensional torus \citep{hilborn}.
-The cat map $F$is defined as
+The cat map $F$ is defined as
 \begin{equation*}
   F: (x,y) \mapsto (2x + y, x + y) \mbox{ (mod 1)}.
 \end{equation*}
@@ -182,7 +206,7 @@ In order to obtain a wider variety of shapes, we parametrize the Arnold's map as
 \begin{equation*}
   F: (x,y) \mapsto (kx + (k-1)y, x + y) \mbox{ (mod 1)},
 \end{equation*}
-where $k \in \mathbb{R}$, $0 \leq k \leq 5$.
+where $k \in \mathbb{R}$, $0 \leq k \leq 10$.
 Note that the determinant of the corresponding matrix
 \begin{equation*}
 \begin{pmatrix}
@@ -190,18 +214,17 @@ Note that the determinant of the corresponding matrix
     1 & 1  
   \end{pmatrix}
 \end{equation*}
-is one.
-Therefore, the parametrized Arnold's map is area-preserving.
-\begin{figure}[t]
+is one, and therefore, the parametrized Arnold's map is also area-preserving.
+\begin{figure}[p]
   \centering
-  \includegraphics[width=0.6\textwidth]{square_049_900}
+  \includegraphics[width=0.5\textwidth]{square_049_900}
   \caption{A square $A = 0.49$ (i.e. the length of each edge is 0.7). Each square consists of patches. This square, for instance, consists of 400 patches, each represented with different colors.}
   \label{fig:square}
 \end{figure}
-The cat map stretches and folds the domain, and as a result, it produces thin strips.
-The parameter $k$ determines the thickness of the strips.
-The higher the value of $k$, the thinner the strips are (Fig.~\ref{fig:catmap_demo1}).
-\begin{figure}[t]
+The cat map stretches and folds the domain, and as a result, it produces numbers of thin strips.
+The parameter $k$ determines the thickness of the strips;
+the higher the value of $k$, the thinner the strips are (Fig.~\ref{fig:catmap_demo1}).
+\begin{figure}[p]
   \centering
   \includegraphics[width=0.4\textwidth]{catmap_1-5}
   \hspace{2cm}
@@ -212,13 +235,13 @@ The higher the value of $k$, the thinner the strips are (Fig.~\ref{fig:catmap_de
   }
   \label{fig:catmap_demo1}
 \end{figure}
-
+%
 Although, $k$ can be any real number, parameters $k_0$ and its negative $-k_0$ result in effectively the same transformation, since the mapped images would be symmetric about the origin, and we take modulus 1 of the points.
-Thus, we can only use $k \in \mathbb{R}^+$ without losing shapes in the solution space.
-Also, the cat map would tend to stretch the unit square to the $x$-direction for greater $k$.
+Thus, we can only use $k \in \mathbb{R}^+$ without constraining our solution space.
+Also, the cat map tends to stretch the unit square to the $x$-direction for greater $k$.
 We will use $k \leq 10$, because, in a simulation using a limited precision, $k\geq 10$ does not give rise to appreciably different shapes (Fig.~\ref{fig:catmap_demo2}).
 
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.4\textwidth]{catmap_10}
   \hspace{2cm}
@@ -231,16 +254,16 @@ We will use $k \leq 10$, because, in a simulation using a limited precision, $k\
 
 \subsection{The Kick Map}
 The other area-preserving chaotic map that we employ, the \textit{kick map}, is usually called the Chirikov's Standard Map \citep{ott}.
-Qualitatively, the kick map \textit{swirls} a shape, a complementary action of the cat map, which stretches a shape into thin strips.
+Qualitatively, the kick map \textit{swirls} a shape, and complements the cat map, whose primary action is \textit{stretching}.
 The kick map is defined as:
 \begin{align*}
   y &\mapsto y + k \sin x \mbox{ (mod $2\pi$)} \\
   x &\mapsto x + y \mbox{ (mod $2\pi$)},
 \end{align*}
 where updates of $y$ and $x$ are done asyncronously ($y$ first).
-The effects of the cat map is stronger for higher value of $k$ (Fig.~\ref{fig:kickmap_demo1}).
+The swirling effects of the kick map is stronger for higher value of $k$ (Fig.~\ref{fig:kickmap_demo1}).
 %
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.4\textwidth]{kickmap_05}
   \hspace{2cm}
@@ -251,10 +274,7 @@ The effects of the cat map is stronger for higher value of $k$ (Fig.~\ref{fig:ki
   \label{fig:kickmap_demo1}
 \end{figure}
 %
-As $k$ approaches $1$, the kick map becomes more and more chaotic.
-It is known that the chaotic border is 0.971635... \citep{spedia}.
-
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.4\textwidth]{kickmap_2pi}
   \hspace{2cm}
@@ -264,7 +284,9 @@ It is known that the chaotic border is 0.971635... \citep{spedia}.
   }
   \label{fig:kickmap_demo2}
 \end{figure}
-
+%
+As $k$ approaches $1$, the kick map becomes a chaotic chaotic map.
+It is known that the chaotic border is $k = 0.971635...$ \citep{spedia}.
 Although we would like to apply the kick map to the unit square, the original kick map is a function from $[0,2\pi] \times [0,2\pi]$ to the same region.
 We use the following version of the kick map whose domain and image are the unit square:
 \begin{align*}
@@ -275,47 +297,66 @@ In plain words, the coordinates of each point in the unit square is scaled by $2
 Taking into account of the chaotic border ($k\approx 1$ in the original kick map), we take the range of $k$ to be $(0,2\pi)$.
 
 \subsection{Generation of Random Shapes}
-Iterate the unit square (Fig.~\ref{fig:square}) $0 \leq k \leq 10$ and $0 \leq k \leq 2\pi$.
+To generate random shapes, we repeatedly apply the chaotic maps to the unit square (Fig.~\ref{fig:square}) $0 \leq k \leq 10$ and $0 \leq k \leq 2\pi$.
 In many cases, random iterations result in a chaotic shape that is apparently not suitable as a shape for the pan. 
 However, the process may obtain orderly shapes such as those in Fig.~\ref{fig:order}.
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.4\textwidth]{random2}
   \includegraphics[width=0.4\textwidth]{random128}
   \includegraphics[width=0.4\textwidth]{random256}
   \includegraphics[width=0.4\textwidth]{random1280}
-  \caption{Even after random iterations, a process that seem to create a chaos, orderly figures may suddenly emerge.}
+  \caption{Even after random iterations, a process that seem to create a chaos, orderly figures may suddenly emerge.
+  These images were produced after random iteration of the chaotic maps 2, 128, 256, and 1280 times, respectively.}
   \label{fig:order}
 \end{figure}
 %
-\begin{figure}[t]
+We see that the repeated random iteration of the cat map and kick map is reliably able to generate random shapes.
+We expect that, by this method combined with the genetici algorithm, we may obtain an unforeseen shape that would outperform circular or rectangular pan in terms of both heat distribution and packing efficiency.
+\begin{figure}[h!]
   \centering
-  \includegraphics[width=0.6\textwidth]{chaotic_shape}
+  \includegraphics[width=0.5\textwidth]{chaotic_shape}
   \caption{Another example of a square of area 0.64 after 128 random iterations of the cat map and kick map.
   Most of time, random iterations will create a disorderly figure.
   }
   \label{fig:chaotic}
 \end{figure}
 
-The random iteration of the cat map and kick map is a good way to generate random shapes.
 
 \subsection{Computing the Boundary}
 As we saw in the previous sections, a shape generated by chaotic maps applied to a square is not necessarily a single piece (Fig.~\ref{fig:chaotic}).
 We need an algorithm that computes the boundary of a given shape in order to run heat equation simulations for these shapes.
-Without knowing the boundary, we cannot determine the location of walls .
-The \textit{boundary fill algorithm} 
-
-For each point with the target color, if p has a neighbor with the non-target color, then it is on the boundary.
-
-With the knowledge of boundary, we can also check the integrity of a shape.
-Randomly pick a point -> Boundary fill from the init point -> If total colored area $\geq$ A (the area started with) throw away that sample (the flooded leaked outside the shape); if the shape is a bit smaller than $A$, it's ok (ok if new area $\geq 3/4 A$).
+Without knowing the boundary of a shape, we cannot determine the location of walls, which makes simulation impossible.
+To compute the boundary of any given shape, we use the \textit{boundary fill algorithm}.
+With the knowledge of boundary, we can also check the integrity of a shape in the following manner:
+\begin{enumerate}
+  \item Pick a point from the collection of patches that constitue a shape.
+  \item Perform the boundary fill algorithm to compute the connected components of the point.
+  \item Compute the area inside the particular connected component by counting the number of patches in it.
+  \item If the area is less than $3A/4$ (the area of the original square), throw away the shape.
+  \item Also, if the area is larger than $A$, it means that there are holes on the boundary of the connected component. Such a shape would not function as a pan, so we abandon the shape.
+\end{enumerate}
+We were not able to include a complete implementation of the boundary fill algorithm in our model.
+Because of this limitation, we could not perform the heat equation simulation to determine the heat distribution of a shape, which is a crucial procedure in our GA.
+Unfortunately, we were not able to use our genetic algorithm to find an optimal shape.
 
 \section{Packing}
+\label{sec:packing}
 An ideal shape should fill the oven without creating a waste of space, maximizing the number of pans that can fit in the oven.
 Clearly, most of the shapes that our GA generates are not able to form tessellations.
 As a measure of how well a shape can pack inside the oven, we use the \textit{effective area}.
-The effective area is the area where a shape occupies and another shape cannot come in.
+The effective area is the area where a shape occupies and cannot be shared with another shape.
 For example, if a shape had a hollow circle in the middle, the area would be less than that of the full circle; however, the effective area would be the area of the full circle.
+Fig.~\ref{fig:effarea} shows how a shape with empty areas in between can have an effective area larger than $A$.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{area_approx}
+  \caption{Demonstration of our algorithm to approximate the effective area.
+  The area of the square that we started with is 0.81.
+  The approximated effective area for this shape is 0.876625844048.}
+  \label{fig:effarea}
+\end{figure}
+%
 We approximate the effective area $A_{eff}$ by:
 \begin{enumerate}
   \item Compute the center of mass, which equals to the mean coordinates of all points.
@@ -324,22 +365,14 @@ We approximate the effective area $A_{eff}$ by:
   \item The effective area $A_{eff}$ is approximated by a 4-gon with the four vertices.
   \item The fitness $Fit_{pack}$ is $A/A_{eff}$, a rational number less than or equal to $1$.
 \end{enumerate}
-The area of a quadrilateral defined by the four edges of length $a,b,c,d$ is computed using the \textit{Bretschneider's formula}.
-Fig.~\ref{effarea} shows how a shape with empty areas can have a large effective area.
-
+The area of a quadrilateral defined by the four edges of length $a,b,c,d$ is computed using the \textit{Bretschneider's formula}:
 \begin{equation*}
   \frac{1}{4}\sqrt{4p^2 q^2 - (b^2 + d^2 - a^2 - c^2)^2}.
 \end{equation*}
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.6\textwidth]{area_approx}
-  \caption{Demonstration of our algorithm to approximate the effective area.
-  The area of the square that we started with is 0.81.
-  The approximated effective area for this shape is 0.876625844048.}
-  \label{fig:effarea}
-\end{figure}
+The fitness $Fit_{pack}$ is expressed as $A/A_{eff}$.
+We have $Fit_{pack} \leq 1$, since $A_{eff}$ is at least as large as $A$.
+$Fit_{pack}$ will be used to compute the fitness of a shape together with $Fit_{heat}$.
 
-\section{The Optimal Wall}
 
 \section{The Heat Equation}
 Our approach to the brownie pan problem began with an attempt to solve the heat equation for a 3D rectangular brownie pan.  Our approach would have been to first solve the equation for a rectangular mass of brownie batter with unknown boundary conditions on five sides and the upper face held at constant baking temperature $T_b$, and then solve the equation again for the pan around the batter, using the pan solution to fill in the boundary conditions for the batter solution.\\
@@ -347,7 +380,7 @@ Our approach to the brownie pan problem began with an attempt to solve the heat 
 In hindsight, this approach was misguided.  The primary reason was logistical: we spent too much of our limited time looking for an exact solution to a specific case that, had we even found a solution, would not have been particularly helpful in solving general cases and would not have contributed to our genetic algorithm-based approach to the general problem.  The other reason this was problematic was mathematical.  We were not able to resolve an unknown in the batter solution, which kept us from attempting the second stage of the problem, the pan.  We believe the math issues may have been worsened by our definition of the problem: our boundary conditions held the top of the batter at $T_b$, but the pan and interior brownie batter were given initial temperature $T_i$.  This meant the edges of the batter touching the top of the pan were being held at two inequal temperatures simultaneously, which is physically impossible.\\
 \\
 After we recognized we were spending too much time on it, we gave up on the PDE and switched to the method of finite differences, which proved more successful.  Part 1 of what follows contains the highlights of a partial solution to the heat equation for the batter mass; Part 2 is a discussion of our finite difference solution.\\
-\subsection{Part 1} 
+\subsection{Analytic Solution} 
 Consider a rectangular mass of batter flush with the first octant and having width $W$, height $H$, and depth $l$.  Let the width of the baking pan be $D$.  Let $K$ be the conduction constant for brownie batter.  Let $T_i$ be the initial temperature of the batter and let $T_b$ be the baking temperature.  Let $f(x,y,z,t)$ be the heat function for the brownie pan, let $r = (x,y,z)$ and let $s = (x + D, y+D, z+D)$ be an `adjustment factor', for later use, so  that the pan problem may also be solved in the first octant.  We wish to find a function $T$ satisfying
 \[\partial{T}{t} = K \nabla^2 T\]
 subject to the initial condition
@@ -445,7 +478,7 @@ so that
 but couldn't use orthogonality relations on the $\sinh$. We ultimately decided to move on to other methods in the interest of time.\\
 
 
-\subsection{Part 2}
+\subsection{Numerical Solution}
 We next implemented the method of finite differences to model the diffusion of heat through the batter and pan using the forward Euler method.  We started by building a two dimensional model for a vertical cross section of a rectangular pan, as follows:\\
 \\
 Let $U^t$ and $C$ be arrays of dimension $M \times N$.  Let $c_a$, $c_p$ and $c_b$ be the thermal conductivity constants of air, the pan material, and brownie batter.  Let $T_i$ stand for the initial temperature of the batter and pan, and let $T_b$ be the baking temperature, which we assume to be constant.  Finally, let $\Delta s = \frac{1}{N}$, and let $w$ be the thickness of the pan material in units.\\
@@ -476,9 +509,12 @@ from which we can derive
 $\Delta t$, the length of a timestep, can be chosen arbitrarily but must obey the relation
 \[\Delta t \leq \frac{(\Delta s)^2}{2c} \text{\citep{horak}}\]
 for $c = c_a,c_p,c_b$ for a stable solution.\\
-\\
+
+\section{Testing and Results}
+\subsection{Parameter Fitting}
 Using values $m = 10, n=10, T_b = 176, T_i = 15, \Delta t = 1/50000, c_a = .024$, and $c_b = .58$, we varied the conduction coefficient for the pan to attempt to determine the best pan material for even heating around the edges.  Our reasoning in these choices was that $176^\circ C \approx 350^\circ F$ and $15^\circ C \approx 60^\circ F$, representing reasonable estimates for baking temperature and room temperature.  We chose $c_a = .024$ because this is the approximate conduction coefficient of air, although conductivity increases with temperature, so this may be an underestimate in an oven setting.  $c_b = .58$ is approximately the conductivity of water and potatos, which we estimated to be reasonable approximations for brownies.\\
-\\
+
+\subsection{Optimal Thermal Conductivity}
 We first compared glass ($c_p = 1.05$) to a much less conductive material ($c_p = 0.05$) and aluminum ($c_p = 215$) in a 10x10 grid, and reached the following states in the lower left hand corners after 10000 timesteps (on next page for visual comparison):\newpage
 \[c_p = 0.05: \begin{pmatrix} 176&176&176&176&176&176&176&176&176&176\\
 176&149.04&152.22&153.46&153.88&154.88&153.46&152.22&149.05&176\\
@@ -522,29 +558,17 @@ We concluded from this that, assuming a minimal level of conductivity (on par wi
 \\
 Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
 
-\section{Testing and Results}
-Model Testing and Sensitivity Analysis, including error analysis, etc.
+\subsection{Optimal Wall}
 \subsection{Strengths and Weaknesses}
 
-Example of tabular environment (using booktab environment. from wikibooks) 
-
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Item} \\
-\cmidrule(r){1-2}
-Animal    & Description & Price (\$) \\
-\midrule
-Gnat      & per gram    & 13.65      \\
-          & each        & 0.01       \\
-Gnu       & stuffed     & 92.50      \\
-Emu       & stuffed     & 33.33      \\
-Armadillo & frozen      & 8.99       \\
-\bottomrule
-\end{tabular}
-
 \section{Conclusion}
-Need a connected component algorithm.
-Flood-fill algorithm is an example of such an algorithm.
+Results
+
+To-do's
+\begin{enumerate}
+  \item Need a connected component algorithm.
+  \item Flood-fill algorithm is an example of such an algorithm.
+\end{enumerate}
 
 % The bibliography is in a separate file
 \renewcommand{\bibname}{References}
