@@ -303,8 +303,11 @@ Randomly pick a point -> Boundary fill from the init point -> If total colored a
 \section{The Optimal Wall}
 
 \section{The Heat Equation}
-This will be a two step problem.  First I'll solve heat for the batter with unknown boundary conditions on the sides, then I'll solve it for the pan to derive those boundary conditions.
-
+Our approach to the brownie pan problem began with an attempt to solve the heat equation for a 3D rectangular brownie pan.  Our approach would have been to first solve the equation for a rectangular mass of brownie batter with unknown boundary conditions on five sides and the upper face held at constant baking temperature $T_b$, and then solve the equation again for the pan around the batter, using the pan solution to fill in the boundary conditions for the batter solution.\\
+\\
+In hindsight, this approach was misguided.  The primary reason was logistical: we spent too much of our limited time looking for an exact solution to a specific case that, had we even found a solution, would not have been particularly helpful in solving general cases and would not have contributed to our genetic algorithm-based approach to the general problem.  The other reason this was problematic was mathematical.  We were not able to resolve an unknown in the batter solution, which kept us from attempting the second stage of the problem, the pan.  We believe the math issues may have been worsened by our definition of the problem: our boundary conditions held the top of the batter at $T_b$, but the pan and interior brownie batter were given initial temperature $T_i$.  This meant the edges of the batter touching the top of the pan were being held at two inequal temperatures simultaneously, which is physically impossible.\\
+\\
+After we recognized we were spending too much time on it, we gave up on the PDE and switched to the method of finite differences, which proved more successful.  Part 1 of what follows is a partial solution to the heat equation for the batter mass; Part 2 is a discussion of our finite difference solution.\\
 \subsection{Part 1} 
 Consider a rectangular mass of batter flush with the first octant and having width $W$, height $H$, and depth $l$.  Let the width of the baking pan be $D$.  Let $K$ be the conduction constant for brownie batter.  Let $T_i$ be the initial temperature of the batter and let $T_b$ be the baking temperature.  Let $f$ be the heat function for the brownie pan, let $r = (x,y,z)$ and $s = x+D,y+D,z+D$.   We wish to find the a function $T$ satisfying
 \[\partial{T}{t} = K \nabla^2 T\]
