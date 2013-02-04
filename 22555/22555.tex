@@ -2,7 +2,7 @@
 % Make sure 'reedmcm.cls' and 'mcm.sty' are in the directory that you're running latex from.
 % These are meant to be used with pdflatex.
 % Note: natbib for bibliography.
-\documentclass[12pt,draft]{reedmcm}
+\documentclass[12pt]{reedmcm}
 \usepackage{mcm}
 \graphicspath{{./images/}}
 
@@ -131,10 +131,6 @@ Mention the traditional methods that are used to solve the particular kind of pr
   \item Determine the optimal base shape in terms of the number of pans that can fit in the oven.
 \end{itemize}
 
-\section{The Baking Simulation}
-\subsection{The Diffusion Equation}
-\subsection{Parameter Fitting}
-
 \section{Genetic Algorithm}
 \label{sec:ga}
 As we mentioned in the introduction, genetic algorithms (GA) is a crucial piece of our solution.
@@ -143,7 +139,7 @@ Since we have already discussed the overall mechanism of our GA, in this section
 %
 \begin{figure}[t]
   \centering
-  \includegraphics[width=1.0\textwidth]{ga_flowchart}
+  \includegraphics[width=0.5\textwidth]{ga_flowchart}
   \caption{A flow chart of the genetic algorithm.}
   \label{fig:gaflow}
 \end{figure}
@@ -377,7 +373,6 @@ The fitness $Fit_{pack}$ is expressed as $A/A_{eff}$.
 We have $Fit_{pack} \leq 1$, since $A_{eff}$ is at least as large as $A$.
 $Fit_{pack}$ will be used to compute the fitness of a shape together with $Fit_{heat}$.
 
-\section{The Optimal Wall}
 
 \section{The Heat Equation}
 Our approach to the brownie pan problem began with an attempt to solve the heat equation for a 3D rectangular brownie pan.  Our approach would have been to first solve the equation for a rectangular mass of brownie batter with unknown boundary conditions on five sides and the upper face held at constant baking temperature $T_b$, and then solve the equation again for the pan around the batter, using the pan solution to fill in the boundary conditions for the batter solution.\\
@@ -385,7 +380,7 @@ Our approach to the brownie pan problem began with an attempt to solve the heat 
 In hindsight, this approach was misguided.  The primary reason was logistical: we spent too much of our limited time looking for an exact solution to a specific case that, had we even found a solution, would not have been particularly helpful in solving general cases and would not have contributed to our genetic algorithm-based approach to the general problem.  The other reason this was problematic was mathematical.  We were not able to resolve an unknown in the batter solution, which kept us from attempting the second stage of the problem, the pan.  We believe the math issues may have been worsened by our definition of the problem: our boundary conditions held the top of the batter at $T_b$, but the pan and interior brownie batter were given initial temperature $T_i$.  This meant the edges of the batter touching the top of the pan were being held at two inequal temperatures simultaneously, which is physically impossible.\\
 \\
 After we recognized we were spending too much time on it, we gave up on the PDE and switched to the method of finite differences, which proved more successful.  Part 1 of what follows contains the highlights of a partial solution to the heat equation for the batter mass; Part 2 is a discussion of our finite difference solution.\\
-\subsection{Part 1} 
+\subsection{Analytic Solution} 
 Consider a rectangular mass of batter flush with the first octant and having width $W$, height $H$, and depth $l$.  Let the width of the baking pan be $D$.  Let $K$ be the conduction constant for brownie batter.  Let $T_i$ be the initial temperature of the batter and let $T_b$ be the baking temperature.  Let $f(x,y,z,t)$ be the heat function for the brownie pan, let $r = (x,y,z)$ and let $s = (x + D, y+D, z+D)$ be an `adjustment factor', for later use, so  that the pan problem may also be solved in the first octant.  We wish to find a function $T$ satisfying
 \[\partial{T}{t} = K \nabla^2 T\]
 subject to the initial condition
@@ -483,7 +478,7 @@ so that
 but couldn't use orthogonality relations on the $\sinh$. We ultimately decided to move on to other methods in the interest of time.\\
 
 
-\subsection{Part 2}
+\subsection{Numerical Solution}
 We next implemented the method of finite differences to model the diffusion of heat through the batter and pan using the forward Euler method.  We started by building a two dimensional model for a vertical cross section of a rectangular pan, as follows:\\
 \\
 Let $U^t$ and $C$ be arrays of dimension $M \times N$.  Let $c_a$, $c_p$ and $c_b$ be the thermal conductivity constants of air, the pan material, and brownie batter.  Let $T_i$ stand for the initial temperature of the batter and pan, and let $T_b$ be the baking temperature, which we assume to be constant.  Finally, let $\Delta s = \frac{1}{N}$, and let $w$ be the thickness of the pan material in units.\\
@@ -514,9 +509,12 @@ from which we can derive
 $\Delta t$, the length of a timestep, can be chosen arbitrarily but must obey the relation
 \[\Delta t \leq \frac{(\Delta s)^2}{2c} \text{\citep{horak}}\]
 for $c = c_a,c_p,c_b$ for a stable solution.\\
-\\
+
+\section{Testing and Results}
+\subsection{Parameter Fitting}
 Using values $m = 10, n=10, T_b = 176, T_i = 15, \Delta t = 1/50000, c_a = .024$, and $c_b = .58$, we varied the conduction coefficient for the pan to attempt to determine the best pan material for even heating around the edges.  Our reasoning in these choices was that $176^\circ C \approx 350^\circ F$ and $15^\circ C \approx 60^\circ F$, representing reasonable estimates for baking temperature and room temperature.  We chose $c_a = .024$ because this is the approximate conduction coefficient of air, although conductivity increases with temperature, so this may be an underestimate in an oven setting.  $c_b = .58$ is approximately the conductivity of water and potatos, which we estimated to be reasonable approximations for brownies.\\
-\\
+
+\subsection{Optimal Thermal Conductivity}
 We first compared glass ($c_p = 1.05$) to a much less conductive material ($c_p = 0.05$) and aluminum ($c_p = 215$) in a 10x10 grid, and reached the following states in the lower left hand corners after 10000 timesteps (on next page for visual comparison):\newpage
 \[c_p = 0.05: \begin{pmatrix} 176&176&176&176&176&176&176&176&176&176\\
 176&149.04&152.22&153.46&153.88&154.88&153.46&152.22&149.05&176\\
@@ -560,29 +558,17 @@ We concluded from this that, assuming a minimal level of conductivity (on par wi
 \\
 Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
 
-\section{Testing and Results}
-Model Testing and Sensitivity Analysis, including error analysis, etc.
+\subsection{Optimal Wall}
 \subsection{Strengths and Weaknesses}
 
-Example of tabular environment (using booktab environment. from wikibooks) 
-
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Item} \\
-\cmidrule(r){1-2}
-Animal    & Description & Price (\$) \\
-\midrule
-Gnat      & per gram    & 13.65      \\
-          & each        & 0.01       \\
-Gnu       & stuffed     & 92.50      \\
-Emu       & stuffed     & 33.33      \\
-Armadillo & frozen      & 8.99       \\
-\bottomrule
-\end{tabular}
-
 \section{Conclusion}
-Need a connected component algorithm.
-Flood-fill algorithm is an example of such an algorithm.
+Results
+
+To-do's
+\begin{enumerate}
+  \item Need a connected component algorithm.
+  \item Flood-fill algorithm is an example of such an algorithm.
+\end{enumerate}
 
 % The bibliography is in a separate file
 \renewcommand{\bibname}{References}
