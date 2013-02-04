@@ -630,10 +630,9 @@ and successfully replicated heat buildup around the edges and corners of the bro
 \section{Conclusion}
 Our essential plan was to use Arnold's cat map to generate batches of random shape boundaries, then extend the boundaries upward at a linear slope to form three dimensional 'pans' to be evaluated for effectiveness using finite differences.  We would have then used a genetic algorithm to cull the most ineffective pans from the population.  We ran into unexpected difficulty when faced with the problem, given an arbitrary and possibly disjoint boundary, of deciding whether points in the oven lie within the boundary or outside it.  This undermined our ability to differentiate between batter and air in our model oven.  The next step would have been to generalize the finite difference scheme for arbitrary shapes, but due to time and practical constraints we were unable to implement our final plans. 
 
-To-do's
+In order to improve our model\cdots
 \begin{enumerate}
-  \item Need a connected component algorithm.
-  \item Flood-fill algorithm is an example of such an algorithm.
+  \item Need to implement an algorithm to connected-components. Flood-fill algorithm is an example of such an algorithm.
   \item recompute variances with batter NOT including pan! M[2:-2,2:-2]
 \end{enumerate}
 
