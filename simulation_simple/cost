@@ -10,45 +10,30 @@
 ##     pars: the first three of these values
 
 ## make par a vector of reasonable starting values:
-## par <- c(2,.3,.3)
+## par <- c(2,.3,.3,4)
 ## then run optim()
 
-cost <- function(pars, tb=5, r=4, E=3, w=10, l=1){
+cost <- function(pars, tb=5, r=4, E=3, w=100, l=1){
    n = pars[1]
    L1 = pars[2]
    L2 = pars[3]
+   m = pars[4]
    k = l*2*pi*r
    etas <- rep(0,w)
-   eta1s <- rep(0,w)
-   eta2s <- rep(0,w)
-   for (i in 1:w){
-       eta1s[i] <- rpois(1,L1)
-       eta2s[i] <- rpois(1,L2)
-       }
+   eta1s <- rpois(w, L1)
+   eta2s <- rpois(w,L2)
    etas <- cumsum(eta1s)-cumsum(eta2s)
    summe = rep(0,w)
    for (i in 1:w){
-       summe[i] <- (tb*(1+(etas[i]/k)^n)+ E*eta1s[i])^5
+       summe[i] <- (tb*(1+(etas[i]/k)^n)+ (eta1s[i]/E))^m
        }
    return(sum(summe))
    }
 
-optim(par = c(2, .3,.3), fn = cost)
+optim(par = c(2, .3,.3,4), fn = cost)
+
+
+## contour plots
 
 
 
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-layout <- function(
