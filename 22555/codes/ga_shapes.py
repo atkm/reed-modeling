@@ -14,26 +14,53 @@ import time
 # Basic shape class: just shape class without mutation
 # More geared towards consideration of shapes of walls 
 # side = linear (ax: 0 deg = vertical, >0 deg = slant), nonlinear (x^n: )
+# height = the height:width ratio
 class BasicShape:
     def __init__(self, kind, A, n, side, height, param):
         if kind == 'square':
-             model = self.sqshape(A,n)
+            model = self.sqshape(A,n)
+            self.edge = sp.sqrt(A)
         if kind == 'circle':
-             model = self.circshape(A,n)
+            model = self.circshape(A,n)
+            self.edge = 2 * sp.sqrt(A/sp.pi)
 
         self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + '_' + side + '_' + str(param) + '_' + str(round(time.time())) + '.png'
         self.pts = model
-        self.resolution = len(self.pts) # total num of points 
-        self.edge = sp.sqrt(A)
+        self.height = height
+        self.resolution = len(self.pts) # total num of points on the base. resolution == 4*n
         if side == 'linear':
-            wall_graph = lambda x: x / param
+            self.wall_graph = lambda x: x / param
         elif side == 'nonlinear':
-            wall_graph = lambda x: x ** (1/param)
+            self.wall_graph = lambda x: x ** (1/param)
         else:
             raise Exception("wall has to be either linear or nonlinear")
-        self.wall_func = lambda h: self.make_wall(self.pts, self.edge, h, wall_graph)
+        self.wall_func = lambda h: self.make_wall(self.pts, self.edge, h, self.wall_graph)
 
         self.wall = self.wall_func(height)
+
+    # intgrid: return the xy coords of the points (including the walls) converted to integer representations
+    def intgrid(self):
+        n = self.resolution/4.0
+        vround = sp.vectorize(round)
+        return vround(n * self.pts)
+
+    # intgrid3d: return the xyz coords of the points (including the walls) converted to integer representations
+    def intgrid3d(self):
+        g3d = []
+        vround = sp.vectorize(round)
+        n = round(self.resolution/4.0)
+        basegrid = self.intgrid()
+        height = round(self.height * n)
+        diff = round(self.wall_graph(height))
+        adddiff = lambda x, y, z: sp.array((x + diff, y + diff, z))
+        for i in range(height):
+            layer = self.make_wall(basegrid, self.edge * n, i, self.wall_graph)
+            layer = vround([adddiff(p[0], p[1], p[2]) for p in layer])
+            g3d.append(layer)
+        # translate all points so that the walls are also on a positive grid
+        return g3d
+        #basegrid = sp.vstack((sp.transpose(basegrid), sp.zeros(len(basegrid))))
+        #basegrid = sp.transpose(basegrid)
 
 
     # xyzxyz: return a 2-tuple of the xyz coords of the bottom points and those for the top.
@@ -73,12 +100,12 @@ class BasicShape:
         return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
 
     def circshape(self, A, n):
-        rad = sp.sqrt(A) # the radius 
-        base = sp.linspace(0, 2*sp.pi, n+1)[:-1] # split up the circumference to n pieces
+        rad = sp.sqrt(A/sp.pi) # the radius 
+        base = sp.linspace(0, 2*sp.pi, 4*n+1)[:-1] # split up the circumference to n pieces
         pts = []
-        for arg in base:
-            x = sp.cos(arg)
-            y = sp.sin(arg)
+        for arg in base: # the coords are translated (+rad, +rad) to make it fit in the 1st quadrant
+            x = rad*(sp.cos(arg) + 1)
+            y = rad*(sp.sin(arg) + 1)
             pts.append((x,y))
         
         return sp.array(pts)
@@ -86,20 +113,20 @@ class BasicShape:
     # make_wall()
     def make_wall(self, pts, edge, height, func):
         wall = []
-        for p in self.pts:
+        for p in pts:
             if p[0] == 0: # the left edge
                 if p[1] == 0: # the bottom left
                     wall.append([(-1)/sp.sqrt(2)*func(height), (-1)/sp.sqrt(2)*func(height), height])
-                elif p[1] == 1: # the top left
+                elif p[1] == edge: # the top left
                     wall.append([ p[0] + (-1)/sp.sqrt(2)*func(height), p[1] + func(height)/sp.sqrt(2), height])
                 else: # others on the left edge
                     wall.append([ p[0] - func(height), p[1], height])
-            elif p[1] == 1: # the top edge
-                if p[0] == 1: # the top right
+            elif p[1] == edge: # the top edge
+                if p[0] == edge: # the top right
                     wall.append([ p[0] + func(height)/sp.sqrt(2), p[1] + func(height)/sp.sqrt(2), height])
                 else: # others on the top edge
                     wall.append([ p[0], p[1] + func(height), height])
-            elif p[0] == 1: # the right edge
+            elif p[0] == edge: # the right edge
                 if p[1] == 0: # the bottom right
                     wall.append([ p[0] + func(height)/sp.sqrt(2), p[1] - func(height)/sp.sqrt(2), height])
                 else: # others on the right edge
