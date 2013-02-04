@@ -28,6 +28,11 @@ Wyatt Alt\\
 \begin{flushleft}
 \textbf{MCM HEAT}\\
 \end{flushleft}
+Our approach to the brownie pan problem began with an attempt to solve the heat equation for a 3D rectangular brownie pan.  Our approach would have been to first solve the equation for a rectangular mass of brownie batter with unknown boundary conditions on five sides and the upper face held at constant baking temperature $T_b$, and then solve the equation again for the pan around the batter, using the pan solution to fill in the boundary conditions for the batter solution.\\
+\\
+In hindsight, this approach was misguided.  The primary reason was logistical: we spent too much of our limited time looking for a solution to a specific case that, had we even found a solution, would not have been particularly helpful in solving general cases.  The other reason this was problematic was mathematical.  We were not able to resolve an unknown in the batter solution, which kept us from approaching the problem in the pan.  It is our suspicion that the math issues may have been worsened by our definition of the problem: our boundary conditions held the top of the batter at $T_b$, but the pan and interior brownie batter were given initial temperature $T_i$.  This meant the edges of the batter touching the top of the pan were being held at two inequal temperatures simultaneously, which is physically impossible. 
+
+
 This will be a two step problem.  First I'll solve heat for the batter with unknown boundary conditions on the sides, then I'll solve it for the pan to derive those boundary conditions.
 \begin{enumerate}
 \item[1.] Consider a rectangular mass of batter flush with the first octant and having width $W$, height $H$, and depth $l$.  Let the width of the baking pan be $D$.  Let $K$ be the conduction constant for brownie batter.  Let $T_i$ be the initial temperature of the batter and let $T_b$ be the baking temperature.  Let $f$ be the heat function for the brownie pan, let $r = (x,y,z)$ and $s = x+D,y+D,z+D$.   We wish to find the a function $T$ satisfying
@@ -187,6 +192,19 @@ Noting the corner values of $122.43, 152.16$, and $152.67$, we were struck by th
 
 We concluded from this that, assuming a minimal level of conductivity (on par with glass), an increase in conductivity does little to increase or allay heat buildup around the edges of the pan.\\
 \\
-Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
+Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives
+\begin{align*}
+u_t &\approx \dfrac{u_{i,j,k}^{q+1} - u_{i,j,k}^q}{\Delta t}\\
+u_{xx} &\approx \dfrac{u_{i+1,j,k}^q - 2u^q{i,j,k} + u_{i-1,j,k}^q}{(\Delta s)^2}\\
+u_{yy} &\approx \dfrac{u_{i,j+1,k}^q - 2u_{i,j,k}^q + u_{i,j-1,k}^q}{(\Delta s)^2}\\
+u_{zz} &\approx \dfrac{u_{i,j,k+1}^q - 2u_{i,j,k}^q + u_{i,j,k-1}^q}{(\Delta s)^2} \end{align*} 
+we arrived at the 'update function'
+\[u^{q+1}_{i,j,k} = u^q_{i,j,k} + c \frac{\Delta t}{(\Delta s)^2} \left(u^q_{i+1,j,k} + u^q_{i,j+1,l} + u^q_{i,j,k+1} + u^q_{i-1,j,k} + u^q_{i,j-1,k} + u^q_{i,j,k-1} - 6u^q_{i,j,k} \right)\]
+and successfully replicated heat buildup around the edges and corners of the brownie pan. (EVIDENCE!)\\
+\\
+Our essential plan was to use Arnold's cat map to generate batches of random shape boundaries, then extend the boundaries upward at a linear slope to form three dimensional 'pans' to be evaluated for effectiveness using finite differences.  We would have then used a genetic algorithm to cull the most ineffective pans from the population.  We ran into unexpected difficulty when faced with the problem, given an arbitrary and possibly disjoint boundary, of deciding whether points in the lie within the boundary or outside it. 
+
+ 
+The next step would have been to generalize the finite difference scheme for arbitrary shapes, but due to time constraints we were unable to implement our final plans.  The primary obstacle to 
 \end{enumerate}
 \end{document}
