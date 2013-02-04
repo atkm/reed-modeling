@@ -303,6 +303,169 @@ Randomly pick a point -> Boundary fill from the init point -> If total colored a
 \section{The Optimal Wall}
 
 \section{The Heat Equation}
+This will be a two step problem.  First I'll solve heat for the batter with unknown boundary conditions on the sides, then I'll solve it for the pan to derive those boundary conditions.
+
+\subsection{Part 1} 
+Consider a rectangular mass of batter flush with the first octant and having width $W$, height $H$, and depth $l$.  Let the width of the baking pan be $D$.  Let $K$ be the conduction constant for brownie batter.  Let $T_i$ be the initial temperature of the batter and let $T_b$ be the baking temperature.  Let $f$ be the heat function for the brownie pan, let $r = (x,y,z)$ and $s = x+D,y+D,z+D$.   We wish to find the a function $T$ satisfying
+\[\partial{T}{t} = K \nabla^2 T\]
+subject to the initial condition
+\[T(x,y,z,0) = T_i\]
+and boundary conditions \begin{align*}
+T(0,y,z,t) = T(W,y,z,t) &= f(s,t)\\
+T(x,0,z,t) = T(x,L,z,t) &= f(s,t)\\
+T(x,y,0,t) &= f(s,t)\\
+T(x,y,H,t) &= T_b \end{align*}
+where $s$ modifies the coordinates on the term to the left.
+To simplify the following computations, define
+\[u(r,t) = T(r,t) - f(s,t)\]
+The equation becomes 
+\[\frac{\partial u}{\partial t} K \nabla^2 u\]
+with initial condition
+\[u(r,0) = T_i - f(s,t)\]
+and boundary conditions \begin{align*}
+T(0,y,z,t) = T(W,y,z,t) &= 0\\
+T(x,0,z,t) = T(x,L,z,t) &= 0\\
+T(x,y,0,t) &= 0\\
+T(x,y,H,t) &= T_b\end{align*}
+We get away with not subtracting from the last equation because the top of the batter is not exposed to the pan.\\
+\\
+Approaching this by separation of variables, suppose
+\[u(r,t) = XYZG\]
+where $X,Y,Z$, and $G$ are functions of $x,y,z$, and $t$.  We find that \begin{align*}
+u_t &= XYZG'\\
+u_{xx} &= X''YZG\\
+u_{yy} &= XY''ZG\\
+u_{zz} &= XYZ''G \end{align*}
+Plugging these into the heat equation and dividing by $KXYZG$, we find \begin{align*}
+XYZG' &= K(X''YZG +XyY'ZG + XYZ''G)\\
+\implies \frac{G'}{KG}  = \frac{X''}{X} + \frac{Y''}{Y} + \frac{Z''}{Z} \end{align*}
+note that the left hand side of this equation is constant, so the right must be as well.  Introducing $\lambda^2$, we write
+\[\frac{G'}{KG} = -\lambda^2 \hspace{15mm} \frac{X''}{X} + \frac{Y''}{Y} + \frac{Z''}{Z} = -\lambda^2\]
+From the first equation, we immediately get the ODE
+\[G'-G\lambda^2 = 0\]
+For the other, let
+\[\frac{X''}{X} = -\frac{Y''}{Y} - \frac{Z''}{Z} - \lambda^2 = -\mu^2\]
+then 
+\[\frac{Y''}{Y} = -\frac{Z''}{Z} - \lambda^2 + \mu^2 = -\nu^2\]
+and
+\[\frac{Z''}{Z} = - \lambda^2 + \mu^2 + \nu^2 = -\rho^2\]
+\\
+We can now derive the following equations: \begin{align*}
+X''+ \mu^2 X &= 0\\
+Y'' + \nu^2 Y &= 0\\
+Z'' + \rho^2 Z &= 0 
+\lambda^2 &= \mu^2 + \nu^2 + \rho^2
+\intertext{and the one from before}
+G'-G\lambda^2 = 0 \end{align*}
+The general solution $G$ is $G = A e^{-\lambda^2 K t}$ for some constant $A$.  The general solution for $X'' + \mu^2 X = 0$ is 
+\[X = c_1 \cos \mu x + c_2 \sin \mu x\]
+Considering the boundary condition $X(0) = 0$, note that $c_1 = 0$.  Considering $X(W) = 0$, we must have $c_2 \sin \mu W = 0$.  Since $c_2=0$ is a trivial case, we focus on cases where $\sin \mu W = 0$.  This happens when $\mu W$ is an integer multiple of $\pi$.  We note therefore that
+\[\mu_m = \frac{m \pi}{W}\]
+for $m = 1,2, \dots$.  Substituting these findings into the equation for $X$, we find solutions
+\[X_m(x) = \sin(\frac{m \pi x}{W})\]
+the same method leads to a solution for $Y$:
+\[Y_n(y) = \sin(\frac{n \pi y}{L})\]
+for $n = 1,2,\dots$.\\
+For $Z$, the boundary conditions are $Z(0) = 0$ and $Z(H) = T_b$ so we let
+\[Z = \gamma_l e^{\rho_l z} + \delta_l e^{-\rho_l z}\]
+the boundary condition $Z(0) = 0$ gives us $\gamma_l = -\delta_l$.  Choosing $\gamma_l = \frac{1}{2}$ we find
+\[Z_l(z) = \sinh \rho_l z\]
+the separated solution for $u$ is thus
+\[u_{mnl}(r,t) = A_{mnl} \sin(\mu_m x) \sin (\nu_n y) \sinh (\rho_l z) e^{-\lambda^2_{mnl}Kt}\]
+with
+\[\lambda_{mnl}^2 = \mu_m^2 + \nu_n^2 + \rho_l^2 = \left(\frac{m \pi}{W}\right)^2 + \left(\frac{n \pi}{L} \right)^2 + \left(\frac{l \pi}{H}\right)^2\]
+for $m,n,l = 1,2 \dots$\\
+We can also form a linear superposition:
+\[u(r,t) = \ssum_{m=1}^\infty \ssum_{n=1}^\infty \ssum_{l=1}^\infty A_{mnl} \sin(\mu_m x) \sin (\nu_n y) \sinh (\rho_l z) e^{-\lambda^2_{mnl}Kt}\]
+with constants $A_{mnl}$.  This general solution satisfies the boundary conditions on all sides except the top.  To determine the values of the constants $A_{mnl}$, note the initial condition
+\[u(r,0) = T_i - f(s,0)\]
+we find
+\[T_i - f(s,0) = \ssum_{m,=1}^\infty \ssum_{n=1}^\infty \ssum_{l=1}^\infty A_{mnl} \sin(\mu_m x) \sin (\nu_n y) \sinh (\rho_l z) \]
+Let 
+\[b_m(y,z) = \ssum_{n=1}^\infty \ssum_{l=1}^\infty A_{mnl} \sin (\nu_n y) \sinh (\rho_l z)\]
+and consider that 
+\[T_i - f(s,0) = \ssum_{m=1}^\infty b_m(y,z) \sin (\mu_m x)\]
+we multiply both sides by $\sin (\mu_k x)$ and integrate, interchanging the integral and sum on the left: \begin{align*}
+\int_0^W (T_i - f(s,0)) \sin(\mu_k x) dx &= \ssum_{m=1}^\infty \int_0^W b_m(y,z) \sin(\mu_m x) \sin (\mu_k x) dx
+\intertext{Take note that on the right hand side, the sines are orthogonal unless $k = m$, leaving}
+\int_0^W (T_i - f(s,0)) \sin(\mu_m x) dx &= \int_0^W b_m(y,z) \sin(\mu_m x) \sin (\mu_k x)
+&= \frac{b_m(y,z) W}{2}\\
+\end{align*}
+and so we have 
+\[b_m(y,z) = \frac{2}{W} \int_0^W (T_i - f(s,0)) \sin(\mu_m x) dx\]
+the same technique will produce the analogous
+\[c_n(x,z) = \frac{2}{L} \int_0^L (T_i - f(s,0)) \sin(\mu_n y) dy\]
+for the opposite side. In the vertical direction, we let
+\[d_l(x,y) = \ssum_{m=1}^\infty \ssum_{n=1}^\infty \sin(\mu_m x) \sin (\nu n y)\]
+and so \begin{align*}
+T_i - f(s,0) &= \ssum_{l=1}^\infty d_l(x,y) \sinh (\rho_l z)\\
+&= \ssum_{l=1}^\infty d_l(x,y) \dfrac{e^{\rho_l z} - e^{-\rho_l z}}{2}\\
+&= \frac{1}{2} \ssum_{l=1}^\infty d_l(x,y) (e^{\rho_l z} - e^{-\rho_l z})\\
+2(T_i - f(s,0)) &= \ssum_{l=1}^\infty d_l (x,y) e^{\rho_l z} - \ssum_{l=1}^\infty d_l(x,y) e^{-\rho_l z} \end{align*}
+let 
+\[\delta(r) = \ssum_{l=1}^\infty d_l(x,y) e^{\rho_l z}\]
+and 
+\[\gamma(r) = \ssum_{l=1}^\infty d_l(x,y) e^{-\rho_l z}\]
+Then
+\[2(T_i - f(s,0)) = \delta(r) - \gamma(r)\]
+and by fourier series,
+\[d_n = \frac{2}{H} \int_0^H \delta(r) e^{-\rho_l z} dz = \frac{2}{H} \int_0^H \gamma(r) e^{\rho_l z} dz\]
+
+\subsection{Part 2}
+We used the method of finite differences to model the diffusion of heat through the batter and pan.  We started by building a two dimensional model for a vertical cross section of a rectangular pan.  Let $U^t$ and $C$ be arrays of dimension $M \times N$.  Let $c_a$,$c_p$ and $c_b$ be the thermal conductivity constants of air, the pan material, and brownie batter.  Let $T_i$ and $T_b$ stand for initial batter temperature and baking temperature, let $\delta s = \frac{1}{N}$, and let $w$ be the thickness of the pan material in units.\\
+\\
+From a schematic perspective, $U^t_{i,j}$ will hold the temperature of point $(i,j)$ at time $t$ and $C_{i,j}$ will hold the corresponding thermal conductivity constant.  For an illustrative example of initial conditions, consider the $6 \times 6$ case with $w = 1$:
+\[U^0 = \begin{pmatrix} T_b&T_b&T_b&T_b&T_b&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_i &T_i&T_i&T_i&T_b\\
+					T_b&T_b&T_b&T_b&T_b&T_b \end{pmatrix} \hspace{20mm}
+  C = \begin{pmatrix} c_a&c_a&c_a&c_a&c_a&c_a\\
+				   c_a &c_p &c_b&c_b&c_p&c_a\\
+				    c_a &c_p &c_b&c_b&c_p&c_a\\
+  				 c_a &c_p &c_b&c_b&c_p&c_a\\
+				 c_a &c_p &c_p&c_p&c_p&c_a\\
+				c_a&c_a&c_a&c_a&c_a&c_a \end{pmatrix} \]		
+To track the evolution of $U$ through time, we define the following partial derivatives for points $(i,j,k)$, with time-coordinate $q$: \begin{align*}
+u_t &\approx \dfrac{u_{i,j}^{q+1} - u_{i,j}^q}{\Delta t}\\
+u_{xx} &\approx \dfrac{u_{i+1,j}^q - 2u^q{i,j} + u_{i-1,j}^q}{(\Delta s)^2}\\
+u_{yy} &\approx \dfrac{u_{i,j+1}^q - 2u_{i,j}^q + u_{i,j-1}^q}{(\Delta s)^2} \end{align*}
+Given these, the heat equation
+\[u_t = c (u_{xx} + u_{yy})\]
+becomes
+\[\dfrac{u_{i,j}^{q+1} - u_{i,j}^q}{\Delta t} = c  \left(\dfrac{u_{i+1,j}^q - 2u_{i,j}^q + u_{i-1,j}^q}{(\Delta s)^2} + \dfrac{u_{i,j+1}^q - 2u_{i,j}^q + u_{i,j-1}^q}{(\Delta s)^2}\right)\]
+from which we can derive
+\[u_{i,j}^{q+1} = u_{i,j}^q + c \cdot \frac{\Delta t}{(\Delta s)^2} \left(u_{i+1,j}^q + u_{i-1,j}^q - 4u_{i,j}^q + u_{i,j+1}^q + u_{i,j-1}^q \right)\]
+$\Delta t$, the length of a timestep, can be chosen arbitrarily but must obey the relation
+\[\Delta t \leq \frac{(\Delta s)^2}{2c}\]
+for $c = c_a,c_p,c_b$ for a stable solution.\\
+\\
+Using values $m = 8, n=8, T_b = 176, T_i = 26, \Delta t = 1/50000, c_a = .024$, and $c_b = .017$, , we varied the conduction coefficient for the pan to determine the best pan material for even heating around the edges.  We first compared glass ($c_p = 1.05$) to a much less conductive material ($c_p = 0.05$) and aluminum ($c_p = 215$) and reached the following states after 20000 timesteps:
+\[c_p = 0.05: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&115.87&63.98&63.98&115.87&176\\
+						176&93.66&38.64&38.64&93.66&176\\
+						176&95.14&42.41&42.41&95.14&176\\
+						176&122.43&95.38&95.38&122.43&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\] 
+\[c_p = 1.05: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&136.34&71.99&71.99&136.34&176\\
+						176&122.18&49.61&49.61&122.18&176\\
+						176&127.61&60.92&60.92&127.61&176\\
+						176&152.16&129.42&129.42&152.56&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\]
+\[c_p = 215: \begin{pmatrix} 176&176&176&176&176&176\\
+						176&136.85&72.48&72.48&136.85&176\\
+						176&122.91&50.37&50.37&122.91&176\\
+						176&128.41&62.09&62.09&128.41&176\\
+						176&152.67&130.25&130.25&152.66&176\\
+					        176&176&176&176&176&176 \end{pmatrix}\]
+Noting the corner values of $122.43, 152.16$, and $152.67$, we were struck by the lack of difference between glass and aluminum.  We repeated the test on glass and aluminum with $14 \times 14$ arrays, and reached the following states in the lower left corners after 50,000 timesteps:
+
+We concluded from this that, assuming a minimal level of conductivity (on par with glass), an increase in conductivity does little to increase or allay heat buildup around the edges of the pan.\\
+\\
+Our next step was to design an analogous scheme for the three-dimensional problem.  Using the partial derivatives 
+\end{enumerate}
 
 
 \section{Testing and Results}
