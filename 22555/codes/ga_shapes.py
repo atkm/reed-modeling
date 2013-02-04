@@ -1,10 +1,10 @@
 import scipy as sp
 import scipy.optimize
 import scipy.fftpack
-import mpl_toolkits.mplot3d.axes3d as axs
-import matplotlib.pylab as plt
-import matplotlib.cm as colormap
-import matplotlib.patches as patch
+#import mpl_toolkits.mplot3d.axes3d as axs
+#import matplotlib.pylab as plt
+#import matplotlib.cm as colormap
+#import matplotlib.patches as patch
 import random
 import time
 
@@ -38,16 +38,20 @@ class BasicShape:
 
         self.wall = self.wall_func(height)
 
+    def round_matrix(self,pts):
+        m = []
+        for arr in pts:
+            m.append([round(p) for p in arr])
+        return m
+
     # intgrid: return the xy coords of the points (including the walls) converted to integer representations
     def intgrid(self):
         n = self.resolution/4.0
-        vround = sp.vectorize(round)
-        return vround(n * self.pts)
+        return sp.array(self.round_matrix(n * self.pts))
 
     # intgrid3d: return the xyz coords of the points (including the walls) converted to integer representations
     def intgrid3d(self):
         g3d = []
-        vround = sp.vectorize(round)
         n = round(self.resolution/4.0)
         basegrid = self.intgrid()
         height = round(self.height * n)
