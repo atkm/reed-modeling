@@ -1,7 +1,7 @@
 ## finite difference for 2d grid.
 ## set up
 import scipy as sp
-sp.set_printoptions(precision = 3, suppress = True, linewidth=200)
+sp.set_printoptions(precision = 2, suppress = True, linewidth=200)
 ## suggested... Tb = 176, Ti = 26, c1 = 3, c2 = .17, w = 1
 
 ## step forward
@@ -83,19 +83,21 @@ def bindM3(S, Tb):
     return M
     
 def bindMgen(S, Tb, pan_points):
-    M = S.copy
+    M = S.copy()
     m = M.shape[0]
     n = M.shape[1]
     l = M.shape[2]
     for i in range(n):
-      for j in range(m):
-        for k in range(l):
-          if not (i,j,k) in pan_points:
-            M[i,j,k] = Tb
+        for j in range(m):
+            for k in range(l):
+                if not sp.array([i,j,k]) in pan_points:
+                    return pan_points
+                    M[i,j,k] = Tb
     return M
     
 def init_congen(In, Ti, pan_points):
-    for tup in pan_points:
+    for p in pan_points:
+        tup = tuple([int(i) for i in p])
         In[tup] = Ti
                 
 def init_con3(In, Ti):
@@ -133,16 +135,25 @@ def myround(x):
 def array_round(A):
     vecround = sp.vectorize(myround)
     return vecround(A)
+
+def modify_pan_points(pan_points):
+    alist = []
+    for array in pan_points:
+      alist.append(array)
+    pan_points = sp.vstack(alist)
+    return pan_points  
  
-def heating_up_gen(m,n,l,pan_points,tf, c1, c2,w, Ti, Tb, delta_t, outputfile):
+def heating_up_gen(pan_points,tf, c1, c2,w, Ti, Tb, delta_t, outputfile):
+    m=n=l = int(max([i for i in sp.transpose(pan_points[2])[0]])+1)
+    pan_points = modify_pan_points(pan_points)
     S = sp.zeros(m*n*l).reshape(m,n,l)
     Cons = S.copy()
     In = S.copy()
     # indentify interior points from pan_points:
-    zmax = max([p[2] for p in pan_points])
+    zmax = int(max([p[2] for p in pan_points]))
     xys = pan_points[:,:2]
     xyz = unique(xys) 
-    pre_interior_points = sp.zeros(3*len(pan_points)*(zmax-1)/2.).reshape(-1,3)
+    pre_interior_points = pan_points
     M = 0
     for h in range(1, zmax):
       for dub in xyz:
@@ -154,16 +165,17 @@ def heating_up_gen(m,n,l,pan_points,tf, c1, c2,w, Ti, Tb, delta_t, outputfile):
     for slice1 in pre_interior_points:
         Q = 0
         for slice2 in pan_points:
-          if slice1 == slice2:
+          if slice1[0] == slice2[0] and slice1[1] == slice2[1]:
               Q = 1
         if Q == 0:
-           pan_points[N,:] = slice1
+           interior_points[N,:] = slice1
            N+=1        
-    interior_points = multidim_intersect(pre_interior_points, pan_points)    
     # define conduction constants
     for p in pan_points:
-      Cons[p] = c1
+      tup = tuple([int(i) for i in p])
+      Cons[tup] = c1
     for p in interior_points:
+      tup = tuple([int(i) for i in p])
       Cons[p] = c2
     Time = sp.arange(1,tf+2)
     delta_s = 1./n
@@ -245,15 +257,15 @@ def heating_up3(m,n,l, tf, c1, c2,w, Ti, Tb,delta_t, outputfile):
     return S2
 
 def unique(a):
-    order = np.lexsort(a.T)
+    order = sp.lexsort(a.T)
     a = a[order]
-    diff = np.diff(a, axis=0)
-    ui = np.ones(len(a), 'bool')
+    diff = sp.diff(a, axis=0)
+    ui = sp.ones(len(a), 'bool')
     ui[1:] = (diff != 0).any(axis=1) 
     return a[ui]
 
 def multidim_setdiff(arr1, arr2):
-    arr1_view = arr1.view([('',arr1.dtype)]*arr1.shape[1])
+    arr1_vquew = arr1.view([('',arr1.dtype)]*arr1.shape[1])
     arr2_view = arr2.view([('',arr2.dtype)]*arr2.shape[1])
     set_difference = numpy.setdiff1d(arr1_view, arr2_view)
     return set_difference.view(arr1.dtype).reshape(-1, arr1.shape[1])

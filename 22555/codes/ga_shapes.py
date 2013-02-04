@@ -57,7 +57,7 @@ class BasicShape:
         height = round(self.height * n)
         diff = round(self.wall_graph(height))
         adddiff = lambda x, y, z: sp.array((x + diff, y + diff, z))
-        for i in range(height):
+        for i in range(int(height)):
             layer = self.make_wall(basegrid, self.edge * n, i, self.wall_graph)
             layer = [adddiff(round(p[0]), round(p[1]), round(p[2])) for p in layer]
             g3d.append(layer)
