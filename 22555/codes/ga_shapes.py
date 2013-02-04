@@ -62,7 +62,7 @@ class BasicShape:
             layer = [adddiff(round(p[0]), round(p[1]), round(p[2])) for p in layer]
             g3d.append(layer)
         # translate all points so that the walls are also on a positive grid
-        return g3d
+        return sp.array(g3d)
         #basegrid = sp.vstack((sp.transpose(basegrid), sp.zeros(len(basegrid))))
         #basegrid = sp.transpose(basegrid)
 
