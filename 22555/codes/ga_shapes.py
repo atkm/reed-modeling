@@ -18,6 +18,8 @@ class BasicShape:
     def __init__(self, kind, A, n, side, height, param):
         if kind == 'square':
              model = self.sqshape(A,n)
+        if kind == 'circle':
+             model = self.circshape(A,n)
 
         self.name = 'basic' + kind + '_' + str(A) + '_' + str(n) + '_' + side + '_' + str(param) + '_' + str(round(time.time())) + '.png'
         self.pts = model
@@ -69,6 +71,17 @@ class BasicShape:
         right = sp.transpose(sp.vstack((right_x * sp.ones(n), top_y - base[0:-1])))
         
         return sp.vstack((left, top, right, bottom[::-1])) # bottom is reversed for consistency
+
+    def circshape(self, A, n):
+        rad = sp.sqrt(A) # the radius 
+        base = sp.linspace(0, 2*sp.pi, n+1)[:-1] # split up the circumference to n pieces
+        pts = []
+        for arg in base:
+            x = sp.cos(arg)
+            y = sp.sin(arg)
+            pts.append((x,y))
+        
+        return sp.array(pts)
 
     # make_wall()
     def make_wall(self, pts, edge, height, func):
@@ -267,6 +280,10 @@ def cvplot_nosave(shape):
         plt.plot((p[0]),(p[1]),'o', markersize = 40/n, color='black')
         subsq = patch.Rectangle(p - [r,r], 2*r, 2*r,color=cval)
         plt.gca().add_patch(subsq)
+    plt.xlim([0,1])
+    plt.ylim([0,1])
+    plt.show()
+
 
 # animation in interactive version
 # NOT WORKING
