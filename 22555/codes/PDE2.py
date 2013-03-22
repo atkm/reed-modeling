@@ -35,8 +35,10 @@ from matplotlib import pyplot as PLT
 from matplotlib import cm as CM
 
 ## creates a heatmap of an array
-def create_heatmap(S):
+def create_heatmap(S, oven_points, Tb):
     M = S.copy()
+    for point in oven_points:
+        S[point] = Tb
     fig = PLT.figure()
     ax1 = fig.add_subplot(111)
     cmap = CM.get_cmap('gist_heat', 15)
@@ -92,16 +94,22 @@ def define_oven_points(m,n, pan_points, batter_points):
     return oven_points
 
 ## holds oven points at bake temperature
-def maintain_boundary(S, Tb, oven_points):
+def maintain_boundary(S, Tb, m,n):
     M = S.copy()
-    for point in oven_points:
-        M[point] = Tb
+    for i in range(m):
+        M[0,i] = Tb
+        M[n-1,i] = Tb
+    for i in range(n):
+        M[i,0] = Tb
+        M[i, m-1] =Tb
     return M
 
 # sets up initial conditions -- batter points and pan points at initial temperatures
-def initial_conditions(In, batter_points, pan_points, Ti):
+def initial_conditions(In, batter_points, pan_points, Ti, oven_points, Tb):
     for point in batter_points + pan_points:
         In[point] = Ti
+    for point in oven_points:
+        In[point] = Tb
     return In
 
 ## creates a matrix to hold conduction constants
@@ -136,7 +144,7 @@ def heating_up(m,n, tf, c1, c2,c3, Ti, Tb,delta_t, outputfile = ''):
     Cons = conduction_constant_matrix(m,n,c1,c2,c3,pan_points,batter_points,oven_points)
    
     # set batter and pan points to initial temperature
-    In = initial_conditions(S.copy(), batter_points, pan_points, Ti)
+    In = initial_conditions(S.copy(), batter_points, pan_points, Ti, oven_points, Tb)
 
     # temoral mesh
     Time = sp.arange(1, tf+2)
@@ -146,14 +154,13 @@ def heating_up(m,n, tf, c1, c2,c3, Ti, Tb,delta_t, outputfile = ''):
         sleep(5)
     
     # set initial and boundary conditions:
-    S = maintain_boundary(S, Tb, oven_points)
-    S1 = S + In 
+    S1 = In 
     S2 = S1.copy()
     for t in Time[:-1]:
         for i in range(m):
             for j in range(n):
                 S2[i,j] = u_next(S1, i,j,Cons[i,j],delta_t, delta_s,m,n)
-                S2 = maintain_boundary(S2, Tb, oven_points)
+                S2 = maintain_boundary(S2, Tb, m,n)
                 S1 = S2.copy()
         print(S2)
         print('\n')
@@ -161,6 +168,6 @@ def heating_up(m,n, tf, c1, c2,c3, Ti, Tb,delta_t, outputfile = ''):
         output = open(outputfile, mode = 'w')
         output.write(str(S2)+ '\n' + str((m,n, tf, c1, c2, Ti, Tb,delta_t))+ '\n')
         output.close()
-    create_heatmap(S2)
+    create_heatmap(S2, oven_points+pan_points, Tb)
     return S2
 
