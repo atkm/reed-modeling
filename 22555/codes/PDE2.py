@@ -17,8 +17,8 @@
 
 ## SUGGESTED FUNCTION CALL:
 
-## from PDE_prime import *
-## heating_up(20,20, 2000,1.05, .58, .024, 24, 176,1/50000.)
+## from PDE2 import *
+## heating_up()                                      # see default parameters if interested
 
 ##################################################################################################
 ##################################################################################################
@@ -123,8 +123,7 @@ def conduction_constant_matrix(m,n, c1,c2,c3, pan_points, batter_points, oven_po
         C[point] = c3 
     return C
 
-
-def heating_up(m,n, tf, c1, c2,c3, Ti, Tb,delta_t, outputfile = ''):
+def heating_up(m = 20,n = 20, tf = 2000, c1 = 1.05, c2 =.58 ,c3 = .024, Ti= 24, Tb = 176,delta_t = 1/500000., outputfile = ''):
     # define spatial mesh
     S = sp.zeros(m*n).reshape(m,n)
     
