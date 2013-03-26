@@ -1,4 +1,5 @@
-## FINITE DIFFERENCE SCHEME FOR 2D GRID
+## FINITE DIFFERENCE SCHEME FOR 2D GRID FOR 2013 MCM
+
 
 ## heating_up()  simulates heat dispersion through a "randomly shaped"  2-dimensional brownie pan 
 ## into batter using  finite differences, then creates a heatmap of the pan after a specified 
@@ -28,7 +29,6 @@
 
 ## set up
 import scipy as sp
-import numpy as np
 sp.set_printoptions(precision = 2, suppress = True, linewidth=200)
 from random import choice
 from matplotlib import pyplot as PLT
@@ -123,7 +123,7 @@ def conduction_constant_matrix(m,n, c1,c2,c3, pan_points, batter_points, oven_po
         C[point] = c3 
     return C
 
-def heating_up(m = 20,n = 20, tf = 2000, c1 = 1.05, c2 =.58 ,c3 = .024, Ti= 24, Tb = 176,delta_t = 1/500000., outputfile = ''):
+def heating_up(m = 20,n = 20, tf = 2000, c1 = 1.05, c2 =.58 ,c3 = .04, Ti= 24, Tb = 176,delta_t = 1/500000., pr = 'true', outputfile = ''):
     # define spatial mesh
     S = sp.zeros(m*n).reshape(m,n)
     
@@ -156,13 +156,15 @@ def heating_up(m = 20,n = 20, tf = 2000, c1 = 1.05, c2 =.58 ,c3 = .024, Ti= 24, 
     S1 = In 
     S2 = S1.copy()
     for t in Time[:-1]:
+        Tb += .005
         for i in range(m):
             for j in range(n):
                 S2[i,j] = u_next(S1, i,j,Cons[i,j],delta_t, delta_s,m,n)
                 S2 = maintain_boundary(S2, Tb, m,n)
                 S1 = S2.copy()
-        print(S2)
-        print('\n')
+        if pr == 'true':
+            print(S2)
+            print('\n')
     if not outputfile == '':
         output = open(outputfile, mode = 'w')
         output.write(str(S2)+ '\n' + str((m,n, tf, c1, c2, Ti, Tb,delta_t))+ '\n')
